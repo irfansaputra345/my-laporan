@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedmusic Style Redesign</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Outfit:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Background Video -->
+    <video autoplay muted loop id="bg-video">
+        <source src="videos/WhatsApp Video 2026-02-10 at 22.15.07.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <video autoplay muted loop id="bg-video-2" style="opacity: 0;">
+        <source src="" type="video/mp4">
+    </video>
+    <div class="bg-overlay"></div>
+    <canvas id="matrix-bg"></canvas>
+
+    <!-- Custom Cursor -->
+    <div id="custom-cursor"></div>
+    <div id="cursor-follower"></div>
+
+    <!-- Header & Navigation -->
+    <header>
+        <div class="logo">IRFAN SAPUTRA</div>
+        <div class="header-actions">
+            <button class="icon-btn" id="lang-btn" title="Switch Language">
+                <i class="fas fa-language"></i>
+            </button>
+            <button class="icon-btn" id="note-btn" title="Notes">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="menu-toggle" id="menu-btn">
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <nav id="fullscreen-nav">
+        <ul>
+            <li><a href="#" class="nav-link" data-index="0" data-key="nav-home">HOME</a></li>
+            <li><a href="#" class="nav-link" data-index="1" data-key="nav-concept">CONCEPT</a></li>
+            <li><a href="#" class="nav-link" data-index="2" data-key="nav-exp">EXPERIENCE</a></li>
+            <li><a href="#" class="nav-link" id="nav-note-trigger" data-key="nav-notes">MY NOTES</a></li>
+            <li><a href="#" class="nav-link" data-index="3" data-key="nav-contact">CONTACT</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content (Scenes) -->
+    <main id="main-container">
+        <!-- Scene 1: Hero -->
+        <section class="scene" id="scene-hero">
+            <div class="content">
+                <h1 class="fade-up" data-key="hero-title">CATAT TEMUAN <br> HARI INI
+                </h1>
+                <div class="hero-actions fade-up">
+                    <button class="icon-btn hero-note-btn open-note-modal" title="Add Note">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <div class="scroll-indicator">
+                        <div class="mouse"></div>
+                        <span data-key="scroll-down">SCROLL DOWN</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Scene 2: Concept -->
+        <section class="scene" id="scene-concept">
+            <div class="content">
+                <h2 class="fade-up" data-key="concept-title">INTELLIGENT <br> RECORDING <br> INSTRUMENTS</h2>
+                <p class="fade-up" data-key="concept-desc">Saya membuat web ini untuk mempermudah temuan dan pencatatan.
+                </p>
+            </div>
+        </section>
+
+        <!-- Scene 3: Experience -->
+        <section class="scene" id="scene-experience">
+            <div class="content">
+                <h2 class="fade-up" data-key="exp-title">IMMERSIBLE <br> INTERFACES</h2>
+                <p class="fade-up" data-key="exp-desc">Crafting paths through the digital nebula, guiding users to their
+                    destination.</p>
+            </div>
+        </section>
+
+        <!-- Scene 4: Contact -->
+        <section class="scene" id="scene-contact">
+            <div class="content">
+                <h2 class="fade-up" data-key="contact-title">START <br> RECORDING</h2>
+                <a href="mailto:irfan354ssaputra@gmail.com" class="contact-cta fade-up" data-key="contact-email"><i
+                        class="fas fa-envelope"></i></a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Note Modal -->
+    <div id="note-modal" class="modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3 data-key="modal-title">My Notes</h3>
+                <button class="close-modal" id="close-note">&times;</button>
+            </div>
+            <div class="note-inputs">
+                <div class="input-group">
+                    <label data-key="label-merchant">Merchant Name</label>
+                    <input type="text" id="merchant-name" data-placeholder="placeholder-merchant"
+                        placeholder="Enter merchant name...">
+                </div>
+                <div class="input-group">
+                    <label data-key="label-market">Market Name</label>
+                    <input type="text" id="market-name" data-placeholder="placeholder-market"
+                        placeholder="Enter market name...">
+                </div>
+                <div class="input-group">
+                    <label data-key="label-commodity">Commodity</label>
+                    <input type="text" id="commodity-name" data-placeholder="placeholder-commodity"
+                        placeholder="Enter commodity name...">
+                </div>
+                <div class="input-group">
+                    <label data-key="label-cause">Cause</label>
+                    <input type="text" id="cause-name" data-placeholder="placeholder-cause"
+                        placeholder="Enter cause...">
+                </div>
+            </div>
+            <textarea id="note-area" data-placeholder="note-placeholder"
+                placeholder="Write your notes here..."></textarea>
+            <div class="modal-footer">
+                <button id="save-note" class="btn-primary" data-key="btn-save">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <button id="whatsapp-note" class="btn-whatsapp" data-key="btn-whatsapp">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+                <button id="download-note" class="btn-secondary" data-key="btn-pdf">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GSAP Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
