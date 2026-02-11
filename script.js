@@ -11,10 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const noteArea = document.getElementById('note-area');
     const reportDateInput = document.getElementById('report-date');
     const marketInput = document.getElementById('market-name');
-    const merchantRowsContainer = document.getElementById('merchant-rows-container');
-    const addMerchantBtn = document.getElementById('add-merchant-btn');
-    const commodityRowsContainer = document.getElementById('commodity-rows-container');
-    const addCommodityBtn = document.getElementById('add-commodity-btn');
+    const findingRowsContainer = document.getElementById('finding-rows-container');
+    const addFindingBtn = document.getElementById('add-finding-btn');
     const saveNoteBtn = document.getElementById('save-note');
     const whatsappNoteBtn = document.getElementById('whatsapp-note');
     const downloadNoteBtn = document.getElementById('download-note');
@@ -56,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'title-clear': 'Clear All',
             'btn-add-item': 'Add Item',
             'btn-add-merchant': 'Add Merchant',
+            'title-findings': 'Finding Details',
             'saved': '<i class="fas fa-check"></i> Saved!'
         },
         'id': {
@@ -85,9 +84,10 @@ document.addEventListener('DOMContentLoaded', () => {
             'btn-save': '<i class="fas fa-save"></i> Simpan',
             'btn-whatsapp': '<i class="fab fa-whatsapp"></i> WhatsApp',
             'btn-pdf': '<i class="fas fa-file-pdf"></i> PDF',
-            'title-clear': 'Bersihkan Semua',
-            'btn-add-item': 'Tambah Barang',
+            'title-clear': 'Clear All',
+            'btn-add-item': 'Tambah Temuan',
             'btn-add-merchant': 'Tambah Pedagang',
+            'title-findings': 'Detail Temuan',
             'saved': '<i class="fas fa-check"></i> Tersimpan!'
         }
     };
@@ -323,48 +323,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Note Feature ---
     // (Variables defined at top)
 
-    function createMerchantRow(merchant = '') {
+    function createFindingRow(merchant = '', commodity = '', cause = '') {
         const row = document.createElement('div');
-        row.className = 'merchant-row';
+        row.className = 'finding-row';
         row.innerHTML = `
             <div class="input-group">
                 <label data-key="label-merchant">${translations[currentLang]['label-merchant']}</label>
                 <input type="text" class="merchant-input" data-placeholder="placeholder-merchant" 
                     placeholder="${translations[currentLang]['placeholder-merchant']}" value="${merchant}">
             </div>
-            <button class="remove-merchant-btn"><i class="fas fa-trash"></i></button>
-        `;
-
-        row.querySelector('.remove-merchant-btn').addEventListener('click', () => {
-            row.remove();
-            checkMerchantRemoveButtons();
-            autoSaveNote();
-        });
-
-        row.querySelectorAll('input').forEach(input => {
-            input.addEventListener('input', autoSaveNote);
-        });
-
-        return row;
-    }
-
-    function checkMerchantRemoveButtons() {
-        const rows = merchantRowsContainer.querySelectorAll('.merchant-row');
-        rows.forEach(row => {
-            const btn = row.querySelector('.remove-merchant-btn');
-            btn.style.display = rows.length > 1 ? 'flex' : 'none';
-        });
-    }
-
-    addMerchantBtn.addEventListener('click', () => {
-        merchantRowsContainer.appendChild(createMerchantRow());
-        checkMerchantRemoveButtons();
-    });
-
-    function createCommodityRow(commodity = '', cause = '') {
-        const row = document.createElement('div');
-        row.className = 'commodity-row';
-        row.innerHTML = `
             <div class="input-group">
                 <label data-key="label-commodity">${translations[currentLang]['label-commodity']}</label>
                 <input type="text" class="commodity-input" data-placeholder="placeholder-commodity" 
@@ -375,16 +342,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 <input type="text" class="cause-input" data-placeholder="placeholder-cause" 
                     placeholder="${translations[currentLang]['placeholder-cause']}" value="${cause}">
             </div>
-            <button class="remove-row-btn"><i class="fas fa-trash"></i></button>
+            <button class="remove-finding-btn"><i class="fas fa-trash"></i></button>
         `;
 
-        row.querySelector('.remove-row-btn').addEventListener('click', () => {
+        row.querySelector('.remove-finding-btn').addEventListener('click', () => {
             row.remove();
-            checkRemoveButtons();
+            checkFindingRemoveButtons();
             autoSaveNote();
         });
 
-        // Add auto-save listeners to new inputs
         row.querySelectorAll('input').forEach(input => {
             input.addEventListener('input', autoSaveNote);
         });
@@ -392,18 +358,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return row;
     }
 
-    function checkRemoveButtons() {
-        const rows = commodityRowsContainer.querySelectorAll('.commodity-row');
+    function checkFindingRemoveButtons() {
+        const rows = findingRowsContainer.querySelectorAll('.finding-row');
         rows.forEach(row => {
-            const btn = row.querySelector('.remove-row-btn');
+            const btn = row.querySelector('.remove-finding-btn');
             btn.style.display = rows.length > 1 ? 'flex' : 'none';
         });
     }
 
-    addCommodityBtn.addEventListener('click', () => {
-        const newRow = createCommodityRow();
-        commodityRowsContainer.appendChild(newRow);
-        checkRemoveButtons();
+    addFindingBtn.addEventListener('click', () => {
+        findingRowsContainer.appendChild(createFindingRow());
+        checkFindingRemoveButtons();
     });
 
     // Load saved data
@@ -412,31 +377,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (savedData.date) reportDateInput.value = savedData.date;
     if (savedData.market) marketInput.value = savedData.market;
 
-    // Load merchant rows
-    merchantRowsContainer.innerHTML = '';
-    if (savedData.merchants && savedData.merchants.length > 0) {
-        savedData.merchants.forEach(m => {
-            // Handle both array of strings and array of objects for compatibility
-            const name = typeof m === 'string' ? m : m.merchant;
-            merchantRowsContainer.appendChild(createMerchantRow(name));
-        });
-    } else {
-        // Compatibility: start with existing single values or one empty row
-        merchantRowsContainer.appendChild(createMerchantRow(savedData.merchant || ''));
-    }
-    checkMerchantRemoveButtons();
-
-    // Load commodity rows
-    commodityRowsContainer.innerHTML = '';
+    // Load finding rows
+    findingRowsContainer.innerHTML = '';
     if (savedData.items && savedData.items.length > 0) {
         savedData.items.forEach(item => {
-            commodityRowsContainer.appendChild(createCommodityRow(item.commodity, item.cause));
+            findingRowsContainer.appendChild(createFindingRow(item.merchant || '', item.commodity || '', item.cause || ''));
         });
     } else {
-        // Fallback or new note: start with one empty row
-        commodityRowsContainer.appendChild(createCommodityRow(savedData.commodity || '', savedData.cause || ''));
+        // Compatibility/New: try to migrate old structure if it exists
+        const legacyMerchant = savedData.merchants && savedData.merchants.length > 0 ? savedData.merchants[0] : (savedData.merchant || '');
+        const legacyCommodity = savedData.commodity || '';
+        const legacyCause = savedData.cause || '';
+        findingRowsContainer.appendChild(createFindingRow(legacyMerchant, legacyCommodity, legacyCause));
     }
-    checkRemoveButtons();
+    checkFindingRemoveButtons();
 
     // Legacy support (migrate old note if exists)
     const oldNote = localStorage.getItem('user_note');
@@ -469,24 +423,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getNoteData() {
         const items = [];
-        commodityRowsContainer.querySelectorAll('.commodity-row').forEach(row => {
+        findingRowsContainer.querySelectorAll('.finding-row').forEach(row => {
             items.push({
+                merchant: row.querySelector('.merchant-input').value,
                 commodity: row.querySelector('.commodity-input').value,
                 cause: row.querySelector('.cause-input').value
             });
         });
 
-        const merchants = [];
-        merchantRowsContainer.querySelectorAll('.merchant-input').forEach(input => {
-            if (input.value.trim()) {
-                merchants.push(input.value.trim());
-            }
-        });
-
         return {
             date: reportDateInput.value,
             market: marketInput.value,
-            merchants: merchants,
             items: items,
             note: noteArea.value
         };
@@ -550,24 +497,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="report-items-list">
                         ${report.items ? report.items.map((item, i) => {
-                // If there are multiple merchants, we list them or the primary one. 
-                // For reports gallery, focusing on items and their causes is usually priority.
-                const merchantsList = report.merchants && report.merchants.length > 0
-                    ? report.merchants.join(', ')
-                    : (report.merchant || '...');
-
                 const marketName = report.market || '...';
-
                 return `
                             <div class="report-item">
-                                <strong>${i + 1}. ${item.commodity || '...'}</strong> – ${marketName} (${merchantsList})
+                                <strong>${i + 1}. ${item.commodity || '...'}</strong> – ${marketName} (${item.merchant || '...'})
                                 <div style="margin-top: 4px;"><span class="report-cause">${item.cause || '...'}</span></div>
                             </div>
                         `;
             }).join('') : `
                             <div class="report-item">
-                                <strong>${report.commodity || '...'}</strong> – ${report.market || '...'} (${report.merchant || '...'})
-                                <div style="margin-top: 4px;"><span class="report-cause">${report.cause || '...'}</span></div>
+                                <strong>...</strong> – ${report.market || '...'}
+                                <div style="margin-top: 4px;"><span class="report-cause">...</span></div>
                             </div>
                         `}
                     </div>
@@ -616,16 +556,13 @@ document.addEventListener('DOMContentLoaded', () => {
         message += `Beberapa komoditas pada PIHPS Pasar Tradisional yang mengalami perubahan harga antara lain:\n\n`;
 
         const marketName = data.market || '...';
-        const merchantsList = data.merchants && data.merchants.length > 0
-            ? data.merchants.join(', ')
-            : (data.merchant || '...');
 
         if (data.items && data.items.length > 0) {
             data.items.forEach((item, i) => {
-                message += `${i + 1}. ${item.commodity || '...'} – ${marketName} (${merchantsList}) – *${item.cause || '...'}*\n\n`;
+                message += `${i + 1}. ${item.commodity || '...'} – ${marketName} (${item.merchant || '...'}) – *${item.cause || '...'}*\n\n`;
             });
         } else {
-            message += `1. ${data.commodity || '...'} – ${marketName} (${merchantsList}) – *${data.cause || '...'}*\n\n`;
+            message += `1. ... – ${marketName} (...) – *...*\n\n`;
         }
 
         message += `${data.note || ''}`;
@@ -679,19 +616,16 @@ document.addEventListener('DOMContentLoaded', () => {
             doc.setFont("Helvetica", "bold");
             let yPos = 60;
             const marketName = data.market || '...';
-            const merchantsList = data.merchants && data.merchants.length > 0
-                ? data.merchants.join(', ')
-                : (data.merchant || '...');
 
             if (data.items && data.items.length > 0) {
                 data.items.forEach((item, i) => {
-                    let summaryText = `${i + 1}. ${item.commodity || "..."} - ${marketName} (${merchantsList}) - ${item.cause || "..."}`;
+                    let summaryText = `${i + 1}. ${item.commodity || "..."} - ${marketName} (${item.merchant || "..."}) - ${item.cause || "..."}`;
                     const splitText = doc.splitTextToSize(summaryText, 180);
                     doc.text(splitText, 10, yPos);
                     yPos += (splitText.length * 7);
                 });
             } else {
-                let summaryText = `1. ${data.commodity || "..."} - ${marketName} (${merchantsList}) - ${data.cause || "..."}`;
+                let summaryText = `1. ... - ${marketName} (...) - ...`;
                 doc.text(summaryText, 10, yPos, { maxWidth: 180 });
                 yPos += 15;
             }
@@ -721,15 +655,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset market name
         marketInput.value = '';
 
-        // Clear and reset merchant rows (keep one empty)
-        merchantRowsContainer.innerHTML = '';
-        merchantRowsContainer.appendChild(createMerchantRow());
-        checkMerchantRemoveButtons();
-
-        // Clear and reset commodity rows (keep one empty)
-        commodityRowsContainer.innerHTML = '';
-        commodityRowsContainer.appendChild(createCommodityRow());
-        checkRemoveButtons();
+        // Clear and reset finding rows (keep one empty)
+        findingRowsContainer.innerHTML = '';
+        findingRowsContainer.appendChild(createFindingRow());
+        checkFindingRemoveButtons();
 
         // Reset textarea
         noteArea.value = '';
