@@ -709,36 +709,90 @@ p {
 
 @media (max-width: 768px) {
     .note-inputs {
-        grid-template-columns: 1fr;
-        gap: 0.8rem;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
     }
 
     .modal-content.glass {
-        padding: 1.5rem;
+        padding: 2rem;
         width: 95%;
     }
 }
 
 @media (max-width: 600px) {
-    .commodity-row {
+    .modal-content.glass {
+        padding: 1rem;
+        border-radius: 20px;
+    }
+
+    .modal-header h3 {
+        font-size: 1.1rem;
+    }
+
+    .note-inputs {
         grid-template-columns: 1fr;
         gap: 0.8rem;
     }
 
-    .commodity-row .remove-row-btn {
+    .commodity-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        padding: 0.8rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .commodity-row .input-group {
+        min-width: 0;
+        /* Prevents grid overflow */
+    }
+
+    .commodity-row .input-group label {
+        font-size: 0.7rem;
+    }
+
+    .commodity-row input {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+        width: 100%;
+    }
+
+    .remove-row-btn {
         position: absolute;
-        top: 0.8rem;
-        right: 0.8rem;
+        top: -8px;
+        right: -8px;
+        width: 24px;
+        height: 24px;
+        font-size: 0.7rem;
+        background: var(--accent-color);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-footer {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.6rem;
+    }
+
+    .btn-primary,
+    .btn-secondary,
+    .btn-whatsapp {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+        flex: 1 1 auto;
+        /* Allow buttons to grow and wrap */
+        min-width: 100px;
+        justify-content: center;
+        white-space: nowrap;
     }
 
     .reports-grid {
         grid-template-columns: 1fr;
         max-height: 55vh;
         gap: 1rem;
-        padding: 0.5rem;
+        padding: 0.2rem;
     }
 
     .report-card {
-        padding: 1.2rem;
+        padding: 1rem;
     }
 }
