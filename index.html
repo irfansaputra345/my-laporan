@@ -195,6 +195,9 @@
                     <button id="download-note" class="btn-secondary" data-key="btn-pdf">
                         <i class="fas fa-file-pdf"></i> PDF
                     </button>
+                    <button id="download-note-word" class="btn-secondary" data-key="btn-word">
+                        <i class="fas fa-file-word"></i> Word
+                    </button>
                 </div>
             </div>
         </div>
@@ -252,6 +255,63 @@
                 </button>
                 <button id="download-sop" class="btn-secondary" data-key="btn-pdf">
                     <i class="fas fa-file-pdf"></i> PDF
+                </button>
+                <button id="download-sop-word" class="btn-secondary" data-key="btn-word">
+                    <i class="fas fa-file-word"></i> Word
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- General Note Modal -->
+    <div id="gen-note-modal" class="modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3 data-key="gen-modal-title">General Notes</h3>
+                <div class="modal-header-actions">
+                    <button id="clear-gen-note" class="btn-clear" title="Clear All" data-key="title-clear"
+                        data-tooltip="Clear all">
+                        <i class="fas fa-broom"></i>
+                    </button>
+                    <button class="close-modal" id="close-gen-note">&times;</button>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h4 class="section-title"><i class="fas fa-heading"></i> <span data-key="label-gen-title">Title</span>
+                </h4>
+                <div class="input-group">
+                    <label data-key="label-gen-title">Title</label>
+                    <input type="text" id="gen-note-title" data-placeholder="Enter title..."
+                        placeholder="Enter title...">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h4 class="section-title"><i class="fas fa-calendar-alt"></i> <span data-key="label-date">Date</span>
+                </h4>
+                <div class="input-group">
+                    <label data-key="label-date">Date</label>
+                    <input type="date" id="gen-note-date">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h4 class="section-title"><i class="fas fa-align-left"></i> <span
+                        data-key="label-gen-content">Content</span></h4>
+                <textarea id="gen-note-area" data-placeholder="note-placeholder"
+                    placeholder="Write your note here..."></textarea>
+            </div>
+
+            <div class="modal-actions-list">
+                <button id="save-gen-note" class="btn-primary" data-key="btn-save">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <button id="download-gen-note" class="btn-secondary" data-key="btn-pdf">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </button>
+                <button id="download-gen-note-word" class="btn-secondary" data-key="btn-word">
+                    <i class="fas fa-file-word"></i> Word
                 </button>
             </div>
         </div>

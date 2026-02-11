@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveNoteBtn = document.getElementById('save-note');
     const whatsappNoteBtn = document.getElementById('whatsapp-note');
     const downloadNoteBtn = document.getElementById('download-note');
+    const downloadNoteWordBtn = document.getElementById('download-note-word');
     const clearNoteBtn = document.getElementById('clear-note');
     const langBtn = document.getElementById('lang-btn');
     const menuBtn = document.getElementById('menu-btn');
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const genNoteArea = document.getElementById('gen-note-area');
     const saveGenNoteBtn = document.getElementById('save-gen-note');
     const downloadGenNoteBtn = document.getElementById('download-gen-note');
+    const downloadGenNoteWordBtn = document.getElementById('download-gen-note-word');
     const clearGenNoteBtn = document.getElementById('clear-gen-note');
     const navGenNoteTrigger = document.getElementById('nav-gen-note-trigger');
     const navSopTrigger = document.getElementById('nav-sop-trigger');
@@ -45,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveSopNoteBtn = document.getElementById('save-sop-note');
     const whatsappSopBtn = document.getElementById('whatsapp-sop');
     const downloadSopBtn = document.getElementById('download-sop');
+    const downloadSopWordBtn = document.getElementById('download-sop-word');
     const clearSopNoteBtn = document.getElementById('clear-sop-note');
 
     // --- Translation Data ---
@@ -80,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'btn-save': '<i class="fas fa-save"></i> Save',
             'btn-whatsapp': '<i class="fab fa-whatsapp"></i> WhatsApp',
             'btn-pdf': '<i class="fas fa-file-pdf"></i> PDF',
+            'btn-word': '<i class="fas fa-file-word"></i> Word',
             'title-clear': 'Clear All',
             'btn-add-item': 'Add Item',
             'btn-add-merchant': 'Add Merchant',
@@ -132,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'btn-save': '<i class="fas fa-save"></i> Simpan',
             'btn-whatsapp': '<i class="fab fa-whatsapp"></i> WhatsApp',
             'btn-pdf': '<i class="fas fa-file-pdf"></i> PDF',
+            'btn-word': '<i class="fas fa-file-word"></i> Word',
             'title-clear': 'Clear All',
             'btn-add-item': 'Tambah Temuan',
             'btn-add-merchant': 'Tambah Pedagang',
@@ -466,6 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.open-note-modal').forEach(btn => {
         btn.addEventListener('click', () => {
             noteModal.classList.add('active');
+            setTimeout(() => { if (marketInput) marketInput.focus(); }, 100);
         });
     });
 
@@ -473,6 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.open-gen-note-modal').forEach(btn => {
         btn.addEventListener('click', () => {
             genNoteModal.classList.add('active');
+            setTimeout(() => { if (genNoteTitle) genNoteTitle.focus(); }, 100);
         });
     });
 
@@ -480,6 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.open-sop-modal').forEach(btn => {
         btn.addEventListener('click', () => {
             sopModal.classList.add('active');
+            setTimeout(() => { if (sopMarketInput) sopMarketInput.focus(); }, 100);
         });
     });
 
@@ -488,6 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             nav.classList.remove('active');
             sopModal.classList.add('active');
+            setTimeout(() => { if (sopMarketInput) sopMarketInput.focus(); }, 100);
         });
     }
 
@@ -787,6 +796,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    function downloadAsWord(filename, html) {
+        const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body>";
+        const footer = "</body></html>";
+        const source = header + html + footer;
+
+        const blob = new Blob(['\ufeff', source], {
+            type: 'application/msword'
+        });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    if (downloadNoteWordBtn) {
+        downloadNoteWordBtn.addEventListener('click', () => {
+            const data = getNoteData();
+            let html = `<h1>LAPORAN TEMUAN PIHPS</h1>
+                        <p><strong>Tanggal:</strong> ${data.date}</p>
+                        <p><strong>Pasar:</strong> ${data.market}</p>
+                        <hr>
+                        <ul>`;
+            data.items.forEach((f, i) => {
+                html += `<li><strong>${f.merchant} (${f.commodity})</strong><br>Penyebab: ${f.cause}</li>`;
+            });
+            html += `</ul>`;
+            if (data.note) {
+                html += `<p><strong>Catatan:</strong> ${data.note}</p>`;
+            }
+            downloadAsWord(`Laporan-${Date.now()}.doc`, html);
+        });
+    }
+
     clearNoteBtn.addEventListener('click', () => {
         const confirmMsg = currentLang === 'id'
             ? 'Apakah Anda yakin ingin menghapus semua isi catatan ini?'
@@ -850,6 +896,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
                 nav.classList.remove('active');
                 genNoteModal.classList.add('active');
+                setTimeout(() => { if (genNoteTitle) genNoteTitle.focus(); }, 100);
             });
         }
 
@@ -907,6 +954,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('PDF failed:', err);
             }
         });
+
+        if (downloadGenNoteWordBtn) {
+            downloadGenNoteWordBtn.addEventListener('click', () => {
+                const data = getGenNoteData();
+                let html = `<h1>${data.title || "Catatan Umum"}</h1>
+                            <p><strong>Tanggal:</strong> ${data.date}</p>
+                            <hr>
+                            <p style="white-space: pre-wrap;">${data.content || ""}</p>`;
+                downloadAsWord(`Catatan-${Date.now()}.doc`, html);
+            });
+        }
     }
 
     // --- SOP Logic Functions ---
@@ -1074,6 +1132,73 @@ document.addEventListener('DOMContentLoaded', () => {
                 checkSopRemoveButtons();
                 localStorage.removeItem('user_sop_data_temp');
             }
+        });
+    }
+
+    if (downloadSopBtn) {
+        downloadSopBtn.addEventListener('click', () => {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                const data = getSopData();
+                const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+                doc.setFont("Helvetica", "bold");
+                doc.setFontSize(16);
+                doc.text("SOP PERUBAHAN HARGA", 10, 20);
+
+                doc.setFont("Helvetica", "normal");
+                doc.setFontSize(11);
+                doc.text(`Tanggal: ${data.date}`, 10, 30);
+                doc.text(`Pasar: ${data.market}`, 10, 40);
+
+                let y = 55;
+                data.items.forEach((item, i) => {
+                    const statusText = translations[currentLang][item.status] || 'tetap';
+                    doc.text(`${i + 1}. ${item.commodity || '...'}: ${statusText}`, 10, y);
+                    if (item.cause) {
+                        doc.setFontSize(10);
+                        doc.text(`   Penyebab: ${item.cause}`, 10, y + 5);
+                        doc.setFontSize(11);
+                        y += 15;
+                    } else {
+                        y += 10;
+                    }
+                });
+
+                doc.save(`SOP-${Date.now()}.pdf`);
+            } catch (err) { console.error('PDF failed:', err); }
+        });
+    }
+
+    if (downloadSopWordBtn) {
+        downloadSopWordBtn.addEventListener('click', () => {
+            const data = getSopData();
+            let html = `<h1>SOP PERUBAHAN HARGA</h1>
+                        <p><strong>Tanggal:</strong> ${data.date}</p>
+                        <p><strong>Pasar:</strong> ${data.market}</p>
+                        <hr>
+                        <table border="1" cellspacing="0" cellpadding="5">
+                            <thead>
+                                <tr style="background: #f0f0f0;">
+                                    <th>No</th>
+                                    <th>Komoditas</th>
+                                    <th>Status Harga</th>
+                                    <th>Penyebab/Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+            data.items.forEach((item, i) => {
+                const statusText = translations[currentLang][item.status] || 'tetap';
+                html += `<tr>
+                            <td>${i + 1}</td>
+                            <td>${item.commodity || '...'}</td>
+                            <td>${statusText}</td>
+                            <td>${item.cause || ''}</td>
+                         </tr>`;
+            });
+            html += `</tbody></table>`;
+            downloadAsWord(`SOP-${Date.now()}.doc`, html);
         });
     }
 
