@@ -10,8 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeNote = document.getElementById('close-note');
     const noteArea = document.getElementById('note-area');
     const reportDateInput = document.getElementById('report-date');
-    const merchantInput = document.getElementById('merchant-name');
     const marketInput = document.getElementById('market-name');
+    const merchantRowsContainer = document.getElementById('merchant-rows-container');
+    const addMerchantBtn = document.getElementById('add-merchant-btn');
     const commodityRowsContainer = document.getElementById('commodity-rows-container');
     const addCommodityBtn = document.getElementById('add-commodity-btn');
     const saveNoteBtn = document.getElementById('save-note');
@@ -52,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'btn-whatsapp': '<i class="fab fa-whatsapp"></i> WhatsApp',
             'btn-pdf': '<i class="fas fa-file-pdf"></i> PDF',
             'btn-add-item': 'Add Item',
+            'btn-add-merchant': 'Add Merchant',
             'saved': '<i class="fas fa-check"></i> Saved!'
         },
         'id': {
@@ -65,11 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
             'concept-title': 'INSTRUMEN <br> PENCATATAN <br> CERDAS',
             'concept-desc': 'Saya membuat web ini untuk mempermudah temuan dan pencatatan.',
             'exp-title': 'LAPORAN TERBARU',
-            'concept-title': 'INSTRUMEN <br> PENCATATAN <br> CERDAS',
-            'concept-desc': 'Saya membuat web ini untuk mempermudah temuan dan pencatatan.',
-            'exp-title': 'LAPORAN TERBARU',
             'contact-title': 'MULAI <br> MENCATAT <br> DI GMAIL',
-            'contact-email': '<i class="fas fa-envelope"></i>',
+            '72': '<i class="fas fa-envelope"></i>',
             'modal-title': 'Laporan Catatan',
             'note-placeholder': 'Tulis catatan tambahan Anda di sini...',
             'label-date': 'Tanggal',
@@ -85,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'btn-whatsapp': '<i class="fab fa-whatsapp"></i> WhatsApp',
             'btn-pdf': '<i class="fas fa-file-pdf"></i> PDF',
             'btn-add-item': 'Tambah Barang',
+            'btn-add-merchant': 'Tambah Pedagang',
             'saved': '<i class="fas fa-check"></i> Tersimpan!'
         }
     };
@@ -312,6 +312,44 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Note Feature ---
     // (Variables defined at top)
 
+    function createMerchantRow(merchant = '') {
+        const row = document.createElement('div');
+        row.className = 'merchant-row';
+        row.innerHTML = `
+            <div class="input-group">
+                <label data-key="label-merchant">${translations[currentLang]['label-merchant']}</label>
+                <input type="text" class="merchant-input" data-placeholder="placeholder-merchant" 
+                    placeholder="${translations[currentLang]['placeholder-merchant']}" value="${merchant}">
+            </div>
+            <button class="remove-merchant-btn"><i class="fas fa-trash"></i></button>
+        `;
+
+        row.querySelector('.remove-merchant-btn').addEventListener('click', () => {
+            row.remove();
+            checkMerchantRemoveButtons();
+            autoSaveNote();
+        });
+
+        row.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', autoSaveNote);
+        });
+
+        return row;
+    }
+
+    function checkMerchantRemoveButtons() {
+        const rows = merchantRowsContainer.querySelectorAll('.merchant-row');
+        rows.forEach(row => {
+            const btn = row.querySelector('.remove-merchant-btn');
+            btn.style.display = rows.length > 1 ? 'flex' : 'none';
+        });
+    }
+
+    addMerchantBtn.addEventListener('click', () => {
+        merchantRowsContainer.appendChild(createMerchantRow());
+        checkMerchantRemoveButtons();
+    });
+
     function createCommodityRow(commodity = '', cause = '') {
         const row = document.createElement('div');
         row.className = 'commodity-row';
@@ -361,8 +399,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedData = JSON.parse(localStorage.getItem('user_note_data') || '{}');
     if (savedData.note) noteArea.value = savedData.note;
     if (savedData.date) reportDateInput.value = savedData.date;
-    if (savedData.merchant) merchantInput.value = savedData.merchant;
     if (savedData.market) marketInput.value = savedData.market;
+
+    // Load merchant rows
+    merchantRowsContainer.innerHTML = '';
+    if (savedData.merchants && savedData.merchants.length > 0) {
+        savedData.merchants.forEach(m => {
+            // Handle both array of strings and array of objects for compatibility
+            const name = typeof m === 'string' ? m : m.merchant;
+            merchantRowsContainer.appendChild(createMerchantRow(name));
+        });
+    } else {
+        // Compatibility: start with existing single values or one empty row
+        merchantRowsContainer.appendChild(createMerchantRow(savedData.merchant || ''));
+    }
+    checkMerchantRemoveButtons();
 
     // Load commodity rows
     commodityRowsContainer.innerHTML = '';
@@ -414,10 +465,17 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
+        const merchants = [];
+        merchantRowsContainer.querySelectorAll('.merchant-input').forEach(input => {
+            if (input.value.trim()) {
+                merchants.push(input.value.trim());
+            }
+        });
+
         return {
             date: reportDateInput.value,
-            merchant: merchantInput.value,
             market: marketInput.value,
+            merchants: merchants,
             items: items,
             note: noteArea.value
         };
@@ -480,12 +538,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="report-date">${cardDateStr}</div>
                     </div>
                     <div class="report-items-list">
-                        ${report.items ? report.items.map((item, i) => `
+                        ${report.items ? report.items.map((item, i) => {
+                // If there are multiple merchants, we list them or the primary one. 
+                // For reports gallery, focusing on items and their causes is usually priority.
+                const merchantsList = report.merchants && report.merchants.length > 0
+                    ? report.merchants.join(', ')
+                    : (report.merchant || '...');
+
+                const marketName = report.market || '...';
+
+                return `
                             <div class="report-item">
-                                <strong>${i + 1}. ${item.commodity || '...'}</strong> – ${report.market || '...'} (${report.merchant || '...'})
+                                <strong>${i + 1}. ${item.commodity || '...'}</strong> – ${marketName} (${merchantsList})
                                 <div style="margin-top: 4px;"><span class="report-cause">${item.cause || '...'}</span></div>
                             </div>
-                        `).join('') : `
+                        `;
+            }).join('') : `
                             <div class="report-item">
                                 <strong>${report.commodity || '...'}</strong> – ${report.market || '...'} (${report.merchant || '...'})
                                 <div style="margin-top: 4px;"><span class="report-cause">${report.cause || '...'}</span></div>
@@ -511,7 +579,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     }
 
-    [noteArea, reportDateInput, merchantInput, marketInput].forEach(el => {
+    [noteArea, reportDateInput, marketInput].forEach(el => {
         el.addEventListener('input', autoSaveNote);
     });
 
@@ -536,12 +604,17 @@ document.addEventListener('DOMContentLoaded', () => {
         message += `Tanggal: ${waDateStr}\n\n`;
         message += `Beberapa komoditas pada PIHPS Pasar Tradisional yang mengalami perubahan harga antara lain:\n\n`;
 
+        const marketName = data.market || '...';
+        const merchantsList = data.merchants && data.merchants.length > 0
+            ? data.merchants.join(', ')
+            : (data.merchant || '...');
+
         if (data.items && data.items.length > 0) {
             data.items.forEach((item, i) => {
-                message += `${i + 1}. ${item.commodity || '...'} – ${data.market || '...'} (${data.merchant || '...'}) – *${item.cause || '...'}*\n\n`;
+                message += `${i + 1}. ${item.commodity || '...'} – ${marketName} (${merchantsList}) – *${item.cause || '...'}*\n\n`;
             });
         } else {
-            message += `1. ${data.commodity || '...'} – ${data.market || '...'} (${data.merchant || '...'}) – *${data.cause || '...'}*\n\n`;
+            message += `1. ${data.commodity || '...'} – ${marketName} (${merchantsList}) – *${data.cause || '...'}*\n\n`;
         }
 
         message += `${data.note || ''}`;
@@ -594,15 +667,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             doc.setFont("Helvetica", "bold");
             let yPos = 60;
+            const marketName = data.market || '...';
+            const merchantsList = data.merchants && data.merchants.length > 0
+                ? data.merchants.join(', ')
+                : (data.merchant || '...');
+
             if (data.items && data.items.length > 0) {
                 data.items.forEach((item, i) => {
-                    let summaryText = `${i + 1}. ${item.commodity || "..."} - ${data.market || "..."} (${data.merchant || "..."}) - ${item.cause || "..."}`;
+                    let summaryText = `${i + 1}. ${item.commodity || "..."} - ${marketName} (${merchantsList}) - ${item.cause || "..."}`;
                     const splitText = doc.splitTextToSize(summaryText, 180);
                     doc.text(splitText, 10, yPos);
                     yPos += (splitText.length * 7);
                 });
             } else {
-                let summaryText = `1. ${data.commodity || "..."} - ${data.market || "..."} (${data.merchant || "..."}) - ${data.cause || "..."}`;
+                let summaryText = `1. ${data.commodity || "..."} - ${marketName} (${merchantsList}) - ${data.cause || "..."}`;
                 doc.text(summaryText, 10, yPos, { maxWidth: 180 });
                 yPos += 15;
             }

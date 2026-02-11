@@ -112,23 +112,48 @@
                 <h3 data-key="modal-title">My Notes</h3>
                 <button class="close-modal" id="close-note">&times;</button>
             </div>
-            <div class="note-inputs">
-                <div class="input-group">
-                    <label data-key="label-date">Date</label>
-                    <input type="date" id="report-date">
+            <!-- General Info Section -->
+            <div class="form-section">
+                <h4 class="section-title"><i class="fas fa-info-circle"></i> <span data-key="title-general">Data
+                        Utama</span></h4>
+                <div class="note-inputs">
+                    <div class="input-group">
+                        <label data-key="label-date">Date</label>
+                        <input type="date" id="report-date">
+                    </div>
+                    <div class="input-group">
+                        <label data-key="label-market">Market Name</label>
+                        <input type="text" id="market-name" data-placeholder="placeholder-market"
+                            placeholder="Enter market name...">
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label data-key="label-merchant">Merchant Name</label>
-                    <input type="text" id="merchant-name" data-placeholder="placeholder-merchant"
-                        placeholder="Enter merchant name...">
-                </div>
-                <div class="input-group">
-                    <label data-key="label-market">Market Name</label>
-                    <input type="text" id="market-name" data-placeholder="placeholder-market"
-                        placeholder="Enter market name...">
-                </div>
+            </div>
 
-                <!-- Dynamic Commodity Rows -->
+            <!-- Merchant List Section -->
+            <div class="form-section">
+                <h4 class="section-title"><i class="fas fa-store"></i> <span data-key="title-merchants">Daftar
+                        Pedagang</span></h4>
+                <div id="merchant-rows-container">
+                    <div class="merchant-row">
+                        <div class="input-group">
+                            <label data-key="label-merchant">Merchant Name</label>
+                            <input type="text" class="merchant-input" data-placeholder="placeholder-merchant"
+                                placeholder="Enter merchant name...">
+                        </div>
+                        <button class="remove-merchant-btn" style="display: none;"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+                <div class="row-actions">
+                    <button id="add-merchant-btn" class="btn-secondary">
+                        <i class="fas fa-plus"></i> <span data-key="btn-add-merchant">Add Merchant</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Commodity Details Section -->
+            <div class="form-section">
+                <h4 class="section-title"><i class="fas fa-shopping-basket"></i> <span
+                        data-key="title-commodities">Detail Komoditas</span></h4>
                 <div id="commodity-rows-container">
                     <div class="commodity-row">
                         <div class="input-group">
@@ -144,25 +169,31 @@
                         <button class="remove-row-btn" style="display: none;"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
-
                 <div class="row-actions">
                     <button id="add-commodity-btn" class="btn-secondary">
                         <i class="fas fa-plus"></i> <span data-key="btn-add-item">Add Item</span>
                     </button>
                 </div>
             </div>
-            <textarea id="note-area" data-placeholder="note-placeholder"
-                placeholder="Write your notes here..."></textarea>
-            <div class="modal-footer">
-                <button id="save-note" class="btn-primary" data-key="btn-save">
-                    <i class="fas fa-save"></i> Save
-                </button>
-                <button id="whatsapp-note" class="btn-whatsapp" data-key="btn-whatsapp">
-                    <i class="fab fa-whatsapp"></i> WhatsApp
-                </button>
-                <button id="download-note" class="btn-secondary" data-key="btn-pdf">
-                    <i class="fas fa-file-pdf"></i> PDF
-                </button>
+
+            <!-- Additional Notes Section -->
+            <div class="form-section">
+                <h4 class="section-title"><i class="fas fa-comment-alt"></i> <span data-key="title-notes">Catatan
+                        Tambahan</span></h4>
+                <textarea id="note-area" data-placeholder="note-placeholder"
+                    placeholder="Write your additional notes here..."></textarea>
+
+                <div class="modal-actions-list">
+                    <button id="save-note" class="btn-primary" data-key="btn-save">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <button id="whatsapp-note" class="btn-whatsapp" data-key="btn-whatsapp">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </button>
+                    <button id="download-note" class="btn-secondary" data-key="btn-pdf">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </button>
+                </div>
             </div>
         </div>
     </div>
