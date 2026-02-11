@@ -88,9 +88,10 @@
         <!-- Scene 3: Experience -->
         <section class="scene" id="scene-experience">
             <div class="content">
-                <h2 class="fade-up" data-key="exp-title">IMMERSIBLE <br> INTERFACES</h2>
-                <p class="fade-up" data-key="exp-desc">Crafting paths through the digital nebula, guiding users to their
-                    destination.</p>
+                <h2 class="fade-up" data-key="exp-title">LAPORAN TERBARU</h2>
+                <div id="reports-container" class="reports-grid fade-up">
+                    <!-- Reports will be injected here -->
+                </div>
             </div>
         </section>
 
@@ -126,15 +127,28 @@
                     <input type="text" id="market-name" data-placeholder="placeholder-market"
                         placeholder="Enter market name...">
                 </div>
-                <div class="input-group">
-                    <label data-key="label-commodity">Commodity</label>
-                    <input type="text" id="commodity-name" data-placeholder="placeholder-commodity"
-                        placeholder="Enter commodity name...">
+
+                <!-- Dynamic Commodity Rows -->
+                <div id="commodity-rows-container">
+                    <div class="commodity-row">
+                        <div class="input-group">
+                            <label data-key="label-commodity">Commodity</label>
+                            <input type="text" class="commodity-input" data-placeholder="placeholder-commodity"
+                                placeholder="Enter commodity...">
+                        </div>
+                        <div class="input-group">
+                            <label data-key="label-cause">Cause</label>
+                            <input type="text" class="cause-input" data-placeholder="placeholder-cause"
+                                placeholder="Enter cause...">
+                        </div>
+                        <button class="remove-row-btn" style="display: none;"><i class="fas fa-trash"></i></button>
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label data-key="label-cause">Cause</label>
-                    <input type="text" id="cause-name" data-placeholder="placeholder-cause"
-                        placeholder="Enter cause...">
+
+                <div class="row-actions">
+                    <button id="add-commodity-btn" class="btn-secondary">
+                        <i class="fas fa-plus"></i> <span data-key="btn-add-item">Add Item</span>
+                    </button>
                 </div>
             </div>
             <textarea id="note-area" data-placeholder="note-placeholder"

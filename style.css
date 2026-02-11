@@ -23,7 +23,7 @@ body {
     font-family: var(--font-body);
     overflow-x: hidden;
     height: 100vh;
-    cursor: none;
+    /* cursor: none; */
     /* Hide default cursor */
 }
 
@@ -381,6 +381,8 @@ p {
     opacity: 0;
     visibility: hidden;
     transition: 0.4s ease;
+    overflow-y: auto;
+    padding: 20px 0;
 }
 
 .modal.active {
@@ -389,16 +391,20 @@ p {
 }
 
 .modal-content.glass {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    padding: 2rem;
+    background: rgba(15, 15, 15, 0.88);
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 28px;
+    padding: 3rem;
     width: 90%;
-    max-width: 600px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    transform: scale(0.9);
-    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    max-width: 700px;
+    margin: auto;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    transform: scale(0.95);
+    transition: 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
 }
 
 .modal.active .modal-content.glass {
@@ -427,9 +433,70 @@ p {
     line-height: 1;
 }
 
+/* Multi-Commodity Row Styles */
+.commodity-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1.2rem;
+    align-items: flex-end;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1.2rem;
+    border-radius: 16px;
+    margin-bottom: 1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.commodity-row:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.remove-row-btn {
+    background: rgba(218, 41, 28, 0.2);
+    color: var(--accent-color);
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 5px;
+    /* Align with inputs */
+}
+
+.remove-row-btn:hover {
+    background: var(--accent-color);
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.row-actions {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: flex-start;
+}
+
+#add-commodity-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+}
+
+#add-commodity-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-style: solid;
+}
+
 #note-area {
     width: 100%;
-    height: 300px;
+    min-height: 150px;
+    max-height: 300px;
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;
@@ -539,8 +606,139 @@ p {
 }
 
 /* Full width for cause on mobile or just make it 3 columns? Let's make it responsive. */
-@media (max-width: 600px) {
+/* Reports Gallery Styles */
+.reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 1rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-color) transparent;
+}
+
+.reports-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.reports-grid::-webkit-scrollbar-thumb {
+    background-color: var(--accent-color);
+    border-radius: 10px;
+}
+
+.report-card {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    padding: 1.8rem;
+    color: #1a1a1a;
+    text-align: left;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    position: relative;
+    border-top: 6px solid var(--accent-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.report-card:hover {
+    transform: translateY(-5px);
+}
+
+.report-card .report-header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.report-card .report-title {
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+}
+
+.report-card .report-date {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.report-items-list {
+    margin-bottom: 1rem;
+}
+
+.report-card .report-item {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px dotted #eee;
+}
+
+.report-card .report-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0.5rem;
+}
+
+.report-card .report-item strong {
+    color: #333;
+}
+
+.report-card .report-cause {
+    display: inline-block;
+    background: rgba(218, 41, 28, 0.1);
+    color: var(--accent-color);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+.report-card .report-notes {
+    font-size: 0.85rem;
+    color: #444;
+    font-style: italic;
+    border-top: 1px dashed #ddd;
+    padding-top: 0.8rem;
+    max-height: 80px;
+    overflow-y: auto;
+}
+
+@media (max-width: 768px) {
     .note-inputs {
         grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+
+    .modal-content.glass {
+        padding: 1.5rem;
+        width: 95%;
+    }
+}
+
+@media (max-width: 600px) {
+    .commodity-row {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+
+    .commodity-row .remove-row-btn {
+        position: absolute;
+        top: 0.8rem;
+        right: 0.8rem;
+    }
+
+    .reports-grid {
+        grid-template-columns: 1fr;
+        max-height: 55vh;
+        gap: 1rem;
+        padding: 0.5rem;
+    }
+
+    .report-card {
+        padding: 1.2rem;
     }
 }
