@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveNoteBtn = document.getElementById('save-note');
     const whatsappNoteBtn = document.getElementById('whatsapp-note');
     const downloadNoteBtn = document.getElementById('download-note');
+    const clearNoteBtn = document.getElementById('clear-note');
     const langBtn = document.getElementById('lang-btn');
     const menuBtn = document.getElementById('menu-btn');
     const nav = document.getElementById('fullscreen-nav');
@@ -52,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'btn-save': '<i class="fas fa-save"></i> Save',
             'btn-whatsapp': '<i class="fab fa-whatsapp"></i> WhatsApp',
             'btn-pdf': '<i class="fas fa-file-pdf"></i> PDF',
+            'title-clear': 'Clear All',
             'btn-add-item': 'Add Item',
             'btn-add-merchant': 'Add Merchant',
             'saved': '<i class="fas fa-check"></i> Saved!'
@@ -83,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'btn-save': '<i class="fas fa-save"></i> Simpan',
             'btn-whatsapp': '<i class="fab fa-whatsapp"></i> WhatsApp',
             'btn-pdf': '<i class="fas fa-file-pdf"></i> PDF',
+            'title-clear': 'Bersihkan Semua',
             'btn-add-item': 'Tambah Barang',
             'btn-add-merchant': 'Tambah Pedagang',
             'saved': '<i class="fas fa-check"></i> Tersimpan!'
@@ -97,6 +100,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const key = el.getAttribute('data-key');
             if (translations[currentLang][key]) {
                 el.innerHTML = translations[currentLang][key];
+
+                // Also update tooltip if attribute exists
+                if (el.hasAttribute('data-tooltip')) {
+                    // Extract text from HTML (stripping icons if any)
+                    const temp = document.createElement('div');
+                    temp.innerHTML = translations[currentLang][key];
+                    el.setAttribute('data-tooltip', temp.textContent.trim());
+                }
             }
         });
 
@@ -695,6 +706,36 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('PDF generation failed:', err);
             alert('Failed to generate PDF. Check console for details.');
         }
+    });
+
+    clearNoteBtn.addEventListener('click', () => {
+        const confirmMsg = currentLang === 'id'
+            ? 'Apakah Anda yakin ingin menghapus semua isi catatan ini?'
+            : 'Are you sure you want to clear all contents of this note?';
+
+        if (!confirm(confirmMsg)) return;
+
+        // Reset date to today
+        reportDateInput.value = new Date().toISOString().split('T')[0];
+
+        // Reset market name
+        marketInput.value = '';
+
+        // Clear and reset merchant rows (keep one empty)
+        merchantRowsContainer.innerHTML = '';
+        merchantRowsContainer.appendChild(createMerchantRow());
+        checkMerchantRemoveButtons();
+
+        // Clear and reset commodity rows (keep one empty)
+        commodityRowsContainer.innerHTML = '';
+        commodityRowsContainer.appendChild(createCommodityRow());
+        checkRemoveButtons();
+
+        // Reset textarea
+        noteArea.value = '';
+
+        // Save empty state to localStorage
+        autoSaveNote();
     });
 
     // --- Language Initial State ---

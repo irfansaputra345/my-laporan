@@ -110,7 +110,13 @@
         <div class="modal-content glass">
             <div class="modal-header">
                 <h3 data-key="modal-title">My Notes</h3>
-                <button class="close-modal" id="close-note">&times;</button>
+                <div class="modal-header-actions">
+                    <button id="clear-note" class="btn-clear" title="Clear All" data-key="title-clear"
+                        data-tooltip="Clear all">
+                        <i class="fas fa-broom"></i>
+                    </button>
+                    <button class="close-modal" id="close-note">&times;</button>
+                </div>
             </div>
             <!-- General Info Section -->
             <div class="form-section">
