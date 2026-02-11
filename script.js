@@ -190,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const noteModal = document.getElementById('note-modal');
     const closeNote = document.getElementById('close-note');
     const noteArea = document.getElementById('note-area');
+    const reportDateInput = document.getElementById('report-date');
     const merchantInput = document.getElementById('merchant-name');
     const marketInput = document.getElementById('market-name');
     const commodityInput = document.getElementById('commodity-name');
@@ -201,6 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load saved data
     const savedData = JSON.parse(localStorage.getItem('user_note_data') || '{}');
     if (savedData.note) noteArea.value = savedData.note;
+    if (savedData.date) reportDateInput.value = savedData.date;
     if (savedData.merchant) merchantInput.value = savedData.merchant;
     if (savedData.market) marketInput.value = savedData.market;
     if (savedData.commodity) commodityInput.value = savedData.commodity;
@@ -237,6 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getNoteData() {
         return {
+            date: reportDateInput.value,
             merchant: merchantInput.value,
             market: marketInput.value,
             commodity: commodityInput.value,
@@ -268,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Auto-save on typing (debounced)
     let autoSaveTimeout;
-    [noteArea, merchantInput, marketInput, commodityInput, causeInput].forEach(el => {
+    [noteArea, reportDateInput, merchantInput, marketInput, commodityInput, causeInput].forEach(el => {
         el.addEventListener('input', () => {
             clearTimeout(autoSaveTimeout);
             autoSaveTimeout = setTimeout(() => {
@@ -282,13 +285,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = getNoteData();
         const phone = "085927326555";
 
-        // Format message
-        let message = `*LAPORAN CATATAN*\n\n`;
-        message += `*Nama Pedagang:* ${data.merchant || '-'}\n`;
-        message += `*Nama Pasar:* ${data.market || '-'}\n`;
-        message += `*Komoditas:* ${data.commodity || '-'}\n`;
-        message += `*Penyebab:* ${data.cause || '-'}\n\n`;
-        message += `*Catatan:*\n${data.note || '-'}`;
+        // Format date from input or use current date
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        let dateStr;
+
+        if (data.date) {
+            const dateObj = new Date(data.date);
+            dateStr = `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+        } else {
+            const now = new Date();
+            dateStr = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+        }
+
+        // Format message matching screenshot exactly
+        let message = `*Laporan Perubahan Harga Komoditas PIHPS Pasar Tradisional*\n\n`;
+        message += `Tanggal: ${dateStr}\n\n`;
+        message += `Beberapa komoditas pada PIHPS Pasar Tradisional yang mengalami perubahan harga antara lain:\n\n`;
+        message += `1. ${data.commodity || '...'} – ${data.market || '...'} (${data.merchant || '...'}) – *${data.cause || '...'}*\n\n`;
+        message += `${data.note || ''}`;
 
         const encodedMsg = encodeURIComponent(message);
         const waUrl = `https://wa.me/${phone.replace(/^0/, '62')}?text=${encodedMsg}`;
@@ -308,52 +322,43 @@ document.addEventListener('DOMContentLoaded', () => {
             const doc = new jsPDF();
             const data = getNoteData();
 
-            if (!data.note.trim() && !data.merchant.trim()) {
+            if (!data.note.trim() && !data.commodity.trim()) {
                 const emptyWarning = currentLang === 'en' ? 'Please type something before downloading.' : 'Silakan ketik sesuatu sebelum mengunduh.';
                 alert(emptyWarning);
                 return;
             }
 
-            // Formatting
-            const dateStr = new Date().toLocaleString();
-            doc.setFontSize(18);
-            doc.text(currentLang === 'en' ? "REPORT NOTES" : "LAPORAN CATATAN", 10, 15);
-            doc.setFontSize(10);
-            doc.setTextColor(150);
-            doc.text(`${currentLang === 'en' ? 'Created on' : 'Dibuat pada'}: ${dateStr}`, 10, 22);
-            doc.line(10, 25, 190, 25);
+            // Date Formatting
+            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            let dateStr;
+            if (data.date) {
+                const dateObj = new Date(data.date);
+                dateStr = `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+            } else {
+                const now = new Date();
+                dateStr = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+            }
 
-            doc.setTextColor(0);
-            doc.setFontSize(12);
-
-            let currentY = 35;
-
-            const fields = [
-                { label: currentLang === 'en' ? 'Merchant Name' : 'Nama Pedagang', value: data.merchant },
-                { label: currentLang === 'en' ? 'Market Name' : 'Nama Pasar', value: data.market },
-                { label: currentLang === 'en' ? 'Commodity' : 'Komoditas', value: data.commodity },
-                { label: currentLang === 'en' ? 'Cause' : 'Penyebab', value: data.cause }
-            ];
-
-            fields.forEach(f => {
-                doc.setFont("Helvetica", "bold");
-                doc.text(`${f.label}:`, 10, currentY);
-                doc.setFont("Helvetica", "normal");
-                doc.text(f.value || "-", 50, currentY);
-                currentY += 10;
-            });
-
-            currentY += 5;
+            // PDF Formatting (Matching professional PIHPS style)
             doc.setFont("Helvetica", "bold");
-            doc.text(currentLang === 'en' ? "Notes:" : "Catatan:", 10, currentY);
-            currentY += 7;
+            doc.setFontSize(14);
+            doc.text("Laporan Perubahan Harga Komoditas PIHPS Pasar Tradisional", 10, 20);
+
             doc.setFont("Helvetica", "normal");
+            doc.setFontSize(11);
+            doc.text(`Tanggal: ${dateStr}`, 10, 30);
 
-            // Split text to fit page width
-            const splitText = doc.splitTextToSize(data.note || "-", 180);
-            doc.text(splitText, 10, currentY);
+            doc.text("Beberapa komoditas pada PIHPS Pasar Tradisional yang mengalami perubahan harga antara lain:", 10, 45, { maxWidth: 180 });
 
-            doc.save(`report-notes-${Date.now()}.pdf`);
+            doc.setFont("Helvetica", "bold");
+            let summaryText = `1. ${data.commodity || "..."} - ${data.market || "..."} (${data.merchant || "..."}) - ${data.cause || "..."}`;
+            doc.text(summaryText, 10, 60, { maxWidth: 180 });
+
+            doc.setFont("Helvetica", "normal");
+            const splitNote = doc.splitTextToSize(data.note || "", 180);
+            doc.text(splitNote, 10, 75);
+
+            doc.save(`Laporan-PIHPS-${Date.now()}.pdf`);
             console.log('PDF download triggered');
         } catch (err) {
             console.error('PDF generation failed:', err);
@@ -380,6 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'contact-email': '<i class="fas fa-envelope"></i>',
             'modal-title': 'My Notes',
             'note-placeholder': 'Write your additional notes here...',
+            'label-date': 'Date',
             'label-merchant': 'Merchant Name',
             'label-market': 'Market Name',
             'label-commodity': 'Commodity',
@@ -409,6 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'contact-email': '<i class="fas fa-envelope"></i>',
             'modal-title': 'Laporan Catatan',
             'note-placeholder': 'Tulis catatan tambahan Anda di sini...',
+            'label-date': 'Tanggal',
             'label-merchant': 'Nama Pedagang',
             'label-market': 'Nama Pasar',
             'label-commodity': 'Nama Komoditas',
