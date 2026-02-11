@@ -236,7 +236,8 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 10%;
+    padding: 6rem 10% 2rem;
+    /* Added top padding for header */
     opacity: 0;
     visibility: hidden;
 }
@@ -250,15 +251,17 @@ main {
 .content {
     text-align: center;
     max-width: 800px;
+    width: 100%;
 }
 
 h1,
 h2 {
     font-family: var(--font-heading);
-    font-size: clamp(2rem, 8vw, 6rem);
+    font-size: clamp(2rem, 7vw, 5rem);
+    /* Slightly reduced max size */
     line-height: 1.1;
     text-transform: uppercase;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 p {
@@ -270,33 +273,142 @@ p {
 .hero-actions {
     position: relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    /* Horizontal layout */
+    justify-content: center;
     align-items: center;
-    gap: 2rem;
+    gap: 3rem;
+    /* Increased gap for row layout */
+    margin-top: 1rem;
 }
 
 .hero-note-btn {
-    font-size: 2rem;
+    font-size: 1.8rem;
     color: #fff;
-    border: 2px solid rgba(255, 255, 255, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.1);
     border-radius: 50%;
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: 0.3s;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(5px);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
     cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1;
+    animation: iconFloat 4s infinite ease-in-out;
+}
+
+/* Orbital Ring */
+.hero-note-btn::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top-color: rgba(255, 255, 255, 0.4);
+    animation: rotateRing 8s linear infinite;
+    pointer-events: none;
+    transition: 0.5s;
+}
+
+.hero-note-btn:hover::after {
+    inset: -10px;
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.2);
+    border-top-color: var(--accent-light);
 }
 
 .hero-note-btn:hover {
-    background: var(--gold-color);
+    transform: translateY(-10px) scale(1.1);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Individual Theme Glows */
+.open-note-modal:hover {
+    box-shadow: 0 0 35px rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.open-sop-modal:hover {
+    border-color: #00bcd4;
+    color: #00bcd4;
+    box-shadow: 0 0 35px rgba(0, 188, 212, 0.4);
+}
+
+.open-sop-modal::after {
+    border-top-color: #00bcd4;
+}
+
+.open-gen-note-modal:hover {
     border-color: var(--gold-color);
-    color: #000;
-    transform: scale(1.15);
-    box-shadow: 0 0 20px rgba(251, 225, 34, 0.6);
+    color: var(--gold-color);
+    box-shadow: 0 0 35px rgba(212, 175, 55, 0.4);
+}
+
+.open-gen-note-modal::after {
+    border-top-color: var(--gold-color);
+}
+
+@keyframes iconFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes rotateRing {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes iconPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
+}
+
+.hero-note-btn i {
+    transition: 0.4s ease;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+}
+
+.hero-note-btn:hover i {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
+}
+
+.open-sop-modal:hover i {
+    filter: drop-shadow(0 0 15px rgba(0, 188, 212, 0.6));
+}
+
+.open-gen-note-modal:hover i {
+    filter: drop-shadow(0 0 15px rgba(251, 225, 34, 0.6));
 }
 
 .scroll-indicator {
@@ -306,7 +418,9 @@ p {
     left: auto;
     transform: none;
     text-align: center;
-    margin-top: 1rem;
+    margin-top: 4rem;
+    /* Increased spacing from icons */
+    opacity: 0.6;
 }
 
 .mouse {
@@ -733,6 +847,41 @@ p {
     transform: scale(1.05);
 }
 
+/* Hero Tooltips - Positioned Below */
+.hero-note-btn::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: calc(100% + 15px);
+    /* Move below */
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    /* Centered and move up-down */
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px) saturate(160%);
+    -webkit-backdrop-filter: blur(10px) saturate(160%);
+    color: #fff;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-family: var(--font-body);
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    z-index: 5;
+}
+
+.hero-note-btn:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
 .btn-secondary:hover {
     background: rgba(255, 255, 255, 0.2);
 }
@@ -756,7 +905,8 @@ p {
     font-family: var(--font-heading);
 }
 
-.input-group input {
+.input-group input,
+.input-group select {
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
@@ -765,7 +915,13 @@ p {
     font-family: var(--font-body);
 }
 
-.input-group input:focus {
+.input-group select option {
+    background-color: #1a1a1a;
+    color: #fff;
+}
+
+.input-group input:focus,
+.input-group select:focus {
     outline: none;
     border-color: var(--accent-color);
     background: rgba(255, 255, 255, 0.05);
@@ -977,4 +1133,73 @@ p {
     .report-card {
         padding: 1rem;
     }
+}
+
+.report-card.general-note-card {
+    border-top: 6px solid var(--gold-color);
+}
+
+/* SOP Card Styling */
+.sop-report-card {
+    border-left: 4px solid #00bcd4;
+}
+
+.sop-status-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: lowercase;
+}
+
+.status-up {
+    background: rgba(218, 41, 28, 0.15);
+    color: var(--accent-color);
+    border: 1px solid rgba(218, 41, 28, 0.3);
+}
+
+.status-down {
+    background: rgba(37, 211, 102, 0.15);
+    color: #25D366;
+    border: 1px solid rgba(37, 211, 102, 0.3);
+}
+
+.status-fixed {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.report-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.report-market {
+    font-size: 0.85rem;
+    opacity: 0.6;
+}
+
+.card-wa-btn {
+    background: #25D366;
+    color: #fff;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.card-wa-btn:hover {
+    transform: scale(1.1);
+    background: #128C7E;
 }

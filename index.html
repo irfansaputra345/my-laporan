@@ -37,10 +37,8 @@
             <button class="icon-btn" id="lang-btn" title="Switch Language">
                 <i class="fas fa-language"></i>
             </button>
-            <button class="icon-btn" id="note-btn" title="Notes">
-                <i class="fas fa-edit"></i>
-            </button>
             <button class="menu-toggle" id="menu-btn">
+
                 <span></span>
                 <span></span>
             </button>
@@ -52,7 +50,9 @@
             <li><a href="#" class="nav-link" data-index="0" data-key="nav-home">HOME</a></li>
             <li><a href="#" class="nav-link" data-index="1" data-key="nav-concept">CONCEPT</a></li>
             <li><a href="#" class="nav-link" data-index="2" data-key="nav-exp">EXPERIENCE</a></li>
-            <li><a href="#" class="nav-link" id="nav-note-trigger" data-key="nav-notes">MY NOTES</a></li>
+            <li><a href="#" class="nav-link" id="nav-note-trigger" data-key="nav-notes">PIHPS REPORTS</a></li>
+            <li><a href="#" class="nav-link" id="nav-sop-trigger" data-key="nav-sop-notes">SOP PRICE CHANGE</a></li>
+            <li><a href="#" class="nav-link" id="nav-gen-note-trigger" data-key="nav-gen-notes">GENERAL NOTES</a></li>
             <li><a href="#" class="nav-link" data-index="3" data-key="nav-contact">CONTACT</a></li>
         </ul>
     </nav>
@@ -65,14 +65,26 @@
                 <h1 class="fade-up" data-key="hero-title">CATAT TEMUAN <br> HARI INI
                 </h1>
                 <div class="hero-actions fade-up">
-                    <button class="icon-btn hero-note-btn open-note-modal" title="Add Note">
-                        <i class="fas fa-edit"></i>
+                    <button class="icon-btn hero-note-btn open-note-modal" title="Add Pihps Report"
+                        data-tooltip="PIHPS Report" data-tooltip-key="tooltip-pihps">
+                        <i class="fas fa-file-invoice"></i>
                     </button>
-                    <div class="scroll-indicator">
-                        <div class="mouse"></div>
-                        <span data-key="scroll-down">SCROLL DOWN</span>
-                    </div>
+                    <button class="icon-btn hero-note-btn open-sop-modal" title="Add SOP Price Change"
+                        style="border-color: #00bcd4; color: #00bcd4;" data-tooltip="SOP Price Change"
+                        data-tooltip-key="tooltip-sop">
+                        <i class="fas fa-chart-column"></i>
+                    </button>
+                    <button class="icon-btn hero-note-btn open-gen-note-modal" title="Add General Note"
+                        style="border-color: var(--gold-color); color: var(--gold-color);" data-tooltip="General Note"
+                        data-tooltip-key="tooltip-gen">
+                        <i class="fas fa-pen-fancy"></i>
+                    </button>
                 </div>
+                <div class="scroll-indicator fade-up">
+                    <div class="mouse"></div>
+                    <span data-key="scroll-down">SCROLL DOWN</span>
+                </div>
+            </div>
             </div>
         </section>
 
@@ -184,6 +196,63 @@
                         <i class="fas fa-file-pdf"></i> PDF
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SOP Price Change Modal -->
+    <div id="sop-modal" class="modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3 data-key="sop-modal-title">SOP Price Change</h3>
+                <div class="modal-header-actions">
+                    <button id="clear-sop-note" class="btn-clear" title="Clear All" data-key="title-clear"
+                        data-tooltip="Clear all">
+                        <i class="fas fa-broom"></i>
+                    </button>
+                    <button class="close-modal" id="close-sop">&times;</button>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h4 class="section-title"><i class="fas fa-calendar-day"></i> <span data-key="label-date">Date</span>
+                </h4>
+                <div class="note-inputs">
+                    <div class="input-group">
+                        <label data-key="label-date">Date</label>
+                        <input type="date" id="sop-date">
+                    </div>
+                    <div class="input-group">
+                        <label data-key="label-market">Market Name</label>
+                        <input type="text" id="sop-market-name" data-placeholder="placeholder-market"
+                            placeholder="Enter market name...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h4 class="section-title"><i class="fas fa-layer-group"></i> <span
+                        data-key="title-sop-details">Commodity Details</span></h4>
+                <div id="sop-rows-container">
+                    <!-- SOP Rows will be dynamic -->
+                </div>
+                <div class="row-actions">
+                    <button id="add-sop-row-btn" class="btn-secondary">
+                        <i class="fas fa-plus"></i> <span data-key="btn-add-item">Add Item</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-actions-list">
+                <button id="save-sop-note" class="btn-primary" data-key="btn-save">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <button id="whatsapp-sop" class="btn-whatsapp" data-key="btn-whatsapp">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+                <button id="download-sop" class="btn-secondary" data-key="btn-pdf">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </button>
             </div>
         </div>
     </div>

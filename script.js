@@ -22,6 +22,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const nav = document.getElementById('fullscreen-nav');
     const menuLinks = document.querySelectorAll('.nav-link');
 
+    // --- General Note Elements ---
+    const genNoteBtn = document.getElementById('gen-note-btn');
+    const genNoteModal = document.getElementById('gen-note-modal');
+    const closeGenNote = document.getElementById('close-gen-note');
+    const genNoteTitle = document.getElementById('gen-note-title');
+    const genNoteDate = document.getElementById('gen-note-date');
+    const genNoteArea = document.getElementById('gen-note-area');
+    const saveGenNoteBtn = document.getElementById('save-gen-note');
+    const downloadGenNoteBtn = document.getElementById('download-gen-note');
+    const clearGenNoteBtn = document.getElementById('clear-gen-note');
+    const navGenNoteTrigger = document.getElementById('nav-gen-note-trigger');
+    const navSopTrigger = document.getElementById('nav-sop-trigger');
+
+    // --- SOP Note Elements ---
+    const sopModal = document.getElementById('sop-modal');
+    const closeSop = document.getElementById('close-sop');
+    const sopDateInput = document.getElementById('sop-date');
+    const sopMarketInput = document.getElementById('sop-market-name');
+    const sopRowsContainer = document.getElementById('sop-rows-container');
+    const addSopRowBtn = document.getElementById('add-sop-row-btn');
+    const saveSopNoteBtn = document.getElementById('save-sop-note');
+    const whatsappSopBtn = document.getElementById('whatsapp-sop');
+    const downloadSopBtn = document.getElementById('download-sop');
+    const clearSopNoteBtn = document.getElementById('clear-sop-note');
+
     // --- Translation Data ---
     const translations = {
         'en': {
@@ -47,7 +72,11 @@ document.addEventListener('DOMContentLoaded', () => {
             'placeholder-merchant': 'Enter name...',
             'placeholder-market': 'Enter market name...',
             'placeholder-commodity': 'Enter commodity...',
-            'placeholder-cause': 'Enter cause...',
+            'placeholder-cause': 'Cause/Description',
+            // Tooltips
+            'tooltip-pihps': 'PIHPS Report',
+            'tooltip-sop': 'SOP Price Change',
+            'tooltip-gen': 'General Note',
             'btn-save': '<i class="fas fa-save"></i> Save',
             'btn-whatsapp': '<i class="fab fa-whatsapp"></i> WhatsApp',
             'btn-pdf': '<i class="fas fa-file-pdf"></i> PDF',
@@ -55,13 +84,25 @@ document.addEventListener('DOMContentLoaded', () => {
             'btn-add-item': 'Add Item',
             'btn-add-merchant': 'Add Merchant',
             'title-findings': 'Finding Details',
+            'nav-gen-notes': 'GENERAL NOTES',
+            'nav-sop-notes': 'SOP PRICE CHANGE',
+            'sop-modal-title': 'SOP Price Change',
+            'title-sop-details': 'Commodity Details',
+            'label-sop-status': 'Price Status',
+            'opt-fixed': 'Fixed',
+            'opt-up': 'Increase',
+            'opt-down': 'Decrease',
+            'gen-modal-title': 'General Notes',
+            'label-gen-title': 'Title',
+            'label-gen-content': 'Note Content',
             'saved': '<i class="fas fa-check"></i> Saved!'
         },
         'id': {
             'nav-home': 'BERANDA',
             'nav-concept': 'KONSEP',
             'nav-exp': 'PENGALAMAN',
-            'nav-notes': 'CATATAN SAYA',
+            'nav-notes': 'LAPORAN PIHPS',
+            'nav-gen-notes': 'CATATAN UMUM',
             'nav-contact': 'KONTAK',
             'hero-title': 'CATAT TEMUAN <br> HARI INI',
             'scroll-down': 'GULIR KE BAWAH',
@@ -70,8 +111,11 @@ document.addEventListener('DOMContentLoaded', () => {
             'exp-title': 'LAPORAN TERBARU',
             'contact-title': 'MULAI <br> MENCATAT <br> DI GMAIL',
             '72': '<i class="fas fa-envelope"></i>',
-            'modal-title': 'Laporan Catatan',
+            'modal-title': 'Laporan PIHPS',
+            'gen-modal-title': 'Catatan Umum',
             'note-placeholder': 'Tulis catatan tambahan Anda di sini...',
+            'label-gen-title': 'Judul',
+            'label-gen-content': 'Isi Catatan',
             'label-date': 'Tanggal',
             'label-merchant': 'Nama Pedagang',
             'label-market': 'Nama Pasar',
@@ -80,7 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
             'placeholder-merchant': 'Nama pedagang...',
             'placeholder-market': 'Nama pasar...',
             'placeholder-commodity': 'Nama komoditas...',
-            'placeholder-cause': 'Penyebab...',
+            'placeholder-cause': 'Penyebab/Keterangan',
+            // Tooltips
+            'tooltip-pihps': 'Laporan PIHPS',
+            'tooltip-sop': 'SOP Perubahan Harga',
+            'tooltip-gen': 'Catatan Umum',
             'btn-save': '<i class="fas fa-save"></i> Simpan',
             'btn-whatsapp': '<i class="fab fa-whatsapp"></i> WhatsApp',
             'btn-pdf': '<i class="fas fa-file-pdf"></i> PDF',
@@ -88,6 +136,13 @@ document.addEventListener('DOMContentLoaded', () => {
             'btn-add-item': 'Tambah Temuan',
             'btn-add-merchant': 'Tambah Pedagang',
             'title-findings': 'Detail Temuan',
+            'nav-sop-notes': 'SOP PERUBAHAN HARGA',
+            'sop-modal-title': 'SOP Perubahan Harga',
+            'title-sop-details': 'Detail Komoditas',
+            'label-sop-status': 'Status Harga',
+            'opt-fixed': 'tetap',
+            'opt-up': 'naik',
+            'opt-down': 'turun',
             'saved': '<i class="fas fa-check"></i> Tersimpan!'
         }
     };
@@ -95,19 +150,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLang = localStorage.getItem('user_lang') || 'en';
 
     function updateLanguage() {
+        // Regular translation
         const elements = document.querySelectorAll('[data-key]');
         elements.forEach(el => {
             const key = el.getAttribute('data-key');
             if (translations[currentLang][key]) {
                 el.innerHTML = translations[currentLang][key];
+            }
+        });
 
-                // Also update tooltip if attribute exists
-                if (el.hasAttribute('data-tooltip')) {
-                    // Extract text from HTML (stripping icons if any)
-                    const temp = document.createElement('div');
-                    temp.innerHTML = translations[currentLang][key];
-                    el.setAttribute('data-tooltip', temp.textContent.trim());
-                }
+        // Tooltip translation (Preserves inner HTML/Icons)
+        const tooltipElements = document.querySelectorAll('[data-tooltip-key]');
+        tooltipElements.forEach(el => {
+            const key = el.getAttribute('data-tooltip-key');
+            if (translations[currentLang][key]) {
+                el.setAttribute('data-tooltip', translations[currentLang][key]);
             }
         });
 
@@ -399,15 +456,51 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('user_note');
     }
 
-    noteBtn.addEventListener('click', () => {
-        noteModal.classList.add('active');
-    });
+    if (noteBtn) {
+        noteBtn.addEventListener('click', () => {
+            noteModal.classList.add('active');
+        });
+    }
 
     // Handle all open-note-modal buttons (including hero button)
     document.querySelectorAll('.open-note-modal').forEach(btn => {
         btn.addEventListener('click', () => {
             noteModal.classList.add('active');
         });
+    });
+
+    // Handle all open-gen-note-modal buttons (new hero button)
+    document.querySelectorAll('.open-gen-note-modal').forEach(btn => {
+        btn.addEventListener('click', () => {
+            genNoteModal.classList.add('active');
+        });
+    });
+
+    // SOP Modal triggers
+    document.querySelectorAll('.open-sop-modal').forEach(btn => {
+        btn.addEventListener('click', () => {
+            sopModal.classList.add('active');
+        });
+    });
+
+    if (navSopTrigger) {
+        navSopTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            nav.classList.remove('active');
+            sopModal.classList.add('active');
+        });
+    }
+
+    if (closeSop) {
+        closeSop.addEventListener('click', () => {
+            sopModal.classList.remove('active');
+        });
+    }
+
+    window.addEventListener('click', (e) => {
+        if (e.target === sopModal) {
+            sopModal.classList.remove('active');
+        }
     });
 
     closeNote.addEventListener('click', () => {
@@ -475,29 +568,81 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!reportsContainer) return;
 
         const reports = JSON.parse(localStorage.getItem('user_reports') || '[]');
-        if (reports.length === 0) {
+        const genNotes = JSON.parse(localStorage.getItem('user_gen_notes') || '[]');
+
+        // Combine and sort by date or insertion order
+        const allNotes = [
+            ...reports.map(r => ({ ...r, type: r.type || 'report' })),
+            ...genNotes.map(n => ({ ...n, type: 'general' }))
+        ];
+
+        if (allNotes.length === 0) {
             reportsContainer.innerHTML = `<p style="grid-column: 1/-1; opacity: 0.5;">${currentLang === 'en' ? 'No reports saved yet.' : 'Belum ada laporan tersimpan.'}</p>`;
             return;
         }
 
         const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
-        reportsContainer.innerHTML = reports.map((report, index) => {
+        reportsContainer.innerHTML = allNotes.map((note, index) => {
             let cardDateStr = '-';
-            if (report.date) {
-                const d = new Date(report.date);
+            if (note.date) {
+                const d = new Date(note.date);
                 cardDateStr = `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+            }
+
+            if (note.type === 'general') {
+                return `
+                    <div class="report-card general-note-card">
+                        <div class="report-header">
+                            <div class="report-title">${note.title || 'GENERAL NOTE'}</div>
+                            <div class="report-date">${cardDateStr}</div>
+                        </div>
+                        <div class="report-notes" style="flex: 1; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 10px;">
+                            ${note.content || note.note || ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (note.type === 'sop') {
+                return `
+                    <div class="report-card sop-report-card">
+                        <div class="report-header">
+                            <div class="report-title"><i class="fas fa-chart-column"></i> SOP PRICE CHANGE</div>
+                            <div class="report-date">${cardDateStr}</div>
+                        </div>
+                        <div class="report-items-list">
+                            ${note.items ? note.items.map((item, i) => {
+                    const statusClass = item.status === 'opt-up' ? 'status-up' : (item.status === 'opt-down' ? 'status-down' : 'status-fixed');
+                    const statusText = translations[currentLang][item.status] || 'tetap';
+                    return `
+                                <div class="report-item">
+                                    <strong>${i + 1}. ${item.commodity || '...'}</strong>: 
+                                    <span class="sop-status-pill ${statusClass}">${statusText}</span>
+                                    ${item.cause ? `<div style="margin-top: 4px; font-size: 0.85rem; opacity: 0.7;">${item.cause}</div>` : ''}
+                                </div>
+                            `;
+                }).join('') : `<div class="report-item">No items</div>`}
+                        </div>
+                        <div class="report-footer">
+                             <div class="report-market"><i class="fas fa-store"></i> ${note.market || '...'}</div>
+                             <button class="card-wa-btn" onclick="window.open('https://api.whatsapp.com/send?phone=6285927326555&text=${encodeURIComponent(`SOP Perubahan Harga mingguan ${note.market || 'Pasar ...'} ${cardDateStr} :\n\n` + (note.items ? note.items.map((item, i) => `${i + 1}. ${item.commodity || '...'}: ${translations[currentLang][item.status] || 'tetap'}${item.cause ? ' karena ' + item.cause : ''}`).join('\n') : ''))}', '_blank')">
+                                <i class="fab fa-whatsapp"></i>
+                             </button>
+                        </div>
+                    </div>
+                `;
             }
 
             return `
                 <div class="report-card">
                     <div class="report-header">
-                        <div class="report-title">PIHPS REPORT #${reports.length - index}</div>
+                        <div class="report-title">PIHPS REPORT</div>
                         <div class="report-date">${cardDateStr}</div>
                     </div>
                     <div class="report-items-list">
-                        ${report.items ? report.items.map((item, i) => {
-                const marketName = report.market || '...';
+                        ${note.items ? note.items.map((item, i) => {
+                const marketName = note.market || '...';
                 return `
                             <div class="report-item">
                                 <strong>${i + 1}. ${item.commodity || '...'}</strong> – ${marketName} (${item.merchant || '...'})
@@ -506,13 +651,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
             }).join('') : `
                             <div class="report-item">
-                                <strong>...</strong> – ${report.market || '...'}
+                                <strong>...</strong> – ${note.market || '...'}
                                 <div style="margin-top: 4px;"><span class="report-cause">...</span></div>
                             </div>
                         `}
                     </div>
                     <div class="report-notes">
-                        ${report.note || ''}
+                        ${note.note || ''}
                     </div>
                 </div>
             `;
@@ -667,10 +812,273 @@ document.addEventListener('DOMContentLoaded', () => {
         autoSaveNote();
     });
 
-    // --- Language Initial State ---
-    if (currentIndex === 0) { // Using a safe check or just call
-        updateLanguage();
+    // --- General Note Feature Logic ---
+    function getGenNoteData() {
+        return {
+            title: genNoteTitle.value,
+            date: genNoteDate.value,
+            content: genNoteArea.value
+        };
     }
+
+    function autoSaveGenNote() {
+        clearTimeout(autoSaveTimeout);
+        autoSaveTimeout = setTimeout(() => {
+            localStorage.setItem('user_gen_note_temp', JSON.stringify(getGenNoteData()));
+            console.log('General note auto-saved');
+        }, 1000);
+    }
+
+    if (genNoteTitle) {
+        [genNoteTitle, genNoteDate, genNoteArea].forEach(el => {
+            el.addEventListener('input', autoSaveGenNote);
+        });
+
+        // Load temp general note
+        const savedGenTemp = JSON.parse(localStorage.getItem('user_gen_note_temp') || '{}');
+        if (savedGenTemp.title) genNoteTitle.value = savedGenTemp.title;
+        if (savedGenTemp.date) genNoteDate.value = savedGenTemp.date;
+        if (savedGenTemp.content) genNoteArea.value = savedGenTemp.content;
+
+        if (genNoteBtn) {
+            genNoteBtn.addEventListener('click', () => genNoteModal.classList.add('active'));
+        }
+        closeGenNote.addEventListener('click', () => genNoteModal.classList.remove('active'));
+
+        if (navGenNoteTrigger) {
+            navGenNoteTrigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                nav.classList.remove('active');
+                genNoteModal.classList.add('active');
+            });
+        }
+
+        window.addEventListener('click', (e) => {
+            if (e.target === genNoteModal) genNoteModal.classList.remove('active');
+        });
+
+        saveGenNoteBtn.addEventListener('click', () => {
+            try {
+                const data = getGenNoteData();
+                const genNotes = JSON.parse(localStorage.getItem('user_gen_notes') || '[]');
+                genNotes.unshift({ ...data, id: Date.now() });
+                localStorage.setItem('user_gen_notes', JSON.stringify(genNotes));
+
+                // Feedback
+                const originalHTML = saveGenNoteBtn.innerHTML;
+                saveGenNoteBtn.innerHTML = translations[currentLang]['saved'];
+                setTimeout(() => saveGenNoteBtn.innerHTML = originalHTML, 2000);
+
+                renderReports();
+            } catch (err) {
+                console.error('Save failed:', err);
+            }
+        });
+
+        clearGenNoteBtn.addEventListener('click', () => {
+            const confirmMsg = currentLang === 'id' ? 'Apakah Anda yakin ingin menghapus?' : 'Are you sure you want to clear?';
+            if (confirm(confirmMsg)) {
+                genNoteTitle.value = '';
+                genNoteDate.value = new Date().toISOString().split('T')[0];
+                genNoteArea.value = '';
+                localStorage.removeItem('user_gen_note_temp');
+            }
+        });
+
+        downloadGenNoteBtn.addEventListener('click', () => {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                const data = getGenNoteData();
+
+                doc.setFont("Helvetica", "bold");
+                doc.setFontSize(16);
+                doc.text(data.title || "Note", 10, 20);
+
+                doc.setFont("Helvetica", "normal");
+                doc.setFontSize(11);
+                doc.text(`Date: ${data.date}`, 10, 30);
+
+                const splitContent = doc.splitTextToSize(data.content || "", 180);
+                doc.text(splitContent, 10, 40);
+
+                doc.save(`Note-${Date.now()}.pdf`);
+            } catch (err) {
+                console.error('PDF failed:', err);
+            }
+        });
+    }
+
+    // --- SOP Logic Functions ---
+    function createSopRow(commodity = '', status = 'opt-fixed', cause = '') {
+        const row = document.createElement('div');
+        row.className = 'finding-row';
+        row.innerHTML = `
+            <div class="input-group">
+                <label data-key="label-commodity">${translations[currentLang]['label-commodity']}</label>
+                <input type="text" class="sop-commodity-input" data-placeholder="placeholder-commodity" 
+                    placeholder="${translations[currentLang]['placeholder-commodity']}" value="${commodity}">
+            </div>
+            <div class="input-group">
+                <label data-key="label-sop-status">${translations[currentLang]['label-sop-status']}</label>
+                <select class="sop-status-select">
+                    <option value="opt-fixed" ${status === 'opt-fixed' ? 'selected' : ''}>${translations[currentLang]['opt-fixed']}</option>
+                    <option value="opt-up" ${status === 'opt-up' ? 'selected' : ''}>${translations[currentLang]['opt-up']}</option>
+                    <option value="opt-down" ${status === 'opt-down' ? 'selected' : ''}>${translations[currentLang]['opt-down']}</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label data-key="label-cause">${translations[currentLang]['label-cause']}</label>
+                <input type="text" class="sop-cause-input" data-placeholder="placeholder-cause" 
+                    placeholder="${translations[currentLang]['placeholder-cause']}" value="${cause}">
+            </div>
+            <button class="remove-sop-row-btn remove-finding-btn"><i class="fas fa-trash"></i></button>
+        `;
+
+        row.querySelector('.remove-sop-row-btn').addEventListener('click', () => {
+            row.remove();
+            checkSopRemoveButtons();
+            autoSaveSop();
+        });
+
+        row.querySelectorAll('input, select').forEach(el => {
+            el.addEventListener('input', autoSaveSop);
+        });
+
+        return row;
+    }
+
+    function checkSopRemoveButtons() {
+        if (!sopRowsContainer) return;
+        const rows = sopRowsContainer.querySelectorAll('.finding-row');
+        rows.forEach(row => {
+            const btn = row.querySelector('.remove-sop-row-btn');
+            btn.style.display = rows.length > 1 ? 'flex' : 'none';
+        });
+    }
+
+    function getSopData() {
+        const items = [];
+        if (sopRowsContainer) {
+            sopRowsContainer.querySelectorAll('.finding-row').forEach(row => {
+                items.push({
+                    commodity: row.querySelector('.sop-commodity-input').value,
+                    status: row.querySelector('.sop-status-select').value,
+                    cause: row.querySelector('.sop-cause-input').value
+                });
+            });
+        }
+
+        return {
+            date: sopDateInput.value,
+            market: sopMarketInput.value,
+            items: items,
+            type: 'sop'
+        };
+    }
+
+    function autoSaveSop() {
+        clearTimeout(autoSaveTimeout);
+        autoSaveTimeout = setTimeout(() => {
+            localStorage.setItem('user_sop_data_temp', JSON.stringify(getSopData()));
+            console.log('SOP data auto-saved');
+        }, 1000);
+    }
+
+    const defaultSopCommodities = [
+        "Beras", "Daging Ayam", "Daging Sapi", "Telur",
+        "Bawang Merah", "Bawang Putih", "Cabe Merah",
+        "Cabe Rawit", "Minyak Goreng", "Gula Pasir"
+    ];
+
+    // Initialize SOP
+    if (sopRowsContainer) {
+        const savedSopTemp = JSON.parse(localStorage.getItem('user_sop_data_temp') || '{}');
+        sopDateInput.value = savedSopTemp.date || "2026-02-10";
+        sopMarketInput.value = savedSopTemp.market || 'Pasar Kranggan';
+
+        sopRowsContainer.innerHTML = '';
+        if (savedSopTemp.items && savedSopTemp.items.length > 0) {
+            savedSopTemp.items.forEach(item => {
+                sopRowsContainer.appendChild(createSopRow(item.commodity, item.status, item.cause));
+            });
+        } else {
+            // Use default commodities if empty
+            defaultSopCommodities.forEach(comm => {
+                sopRowsContainer.appendChild(createSopRow(comm, 'opt-fixed', ''));
+            });
+        }
+        checkSopRemoveButtons();
+
+        [sopDateInput, sopMarketInput].forEach(el => el.addEventListener('input', autoSaveSop));
+        addSopRowBtn.addEventListener('click', () => {
+            sopRowsContainer.appendChild(createSopRow());
+            checkSopRemoveButtons();
+        });
+    }
+
+    if (saveSopNoteBtn) {
+        saveSopNoteBtn.addEventListener('click', () => {
+            try {
+                const data = getSopData();
+                const reports = JSON.parse(localStorage.getItem('user_reports') || '[]');
+                reports.unshift(data);
+                localStorage.setItem('user_reports', JSON.stringify(reports));
+
+                const originalHTML = saveSopNoteBtn.innerHTML;
+                saveSopNoteBtn.innerHTML = translations[currentLang]['saved'];
+                setTimeout(() => saveSopNoteBtn.innerHTML = originalHTML, 2000);
+                renderReports();
+            } catch (err) { console.error(err); }
+        });
+    }
+
+    if (whatsappSopBtn) {
+        whatsappSopBtn.addEventListener('click', () => {
+            const data = getSopData();
+            const phone = "085927326555";
+            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+            let dateStr;
+            if (data.date) {
+                const d = new Date(data.date);
+                dateStr = `${d.getDate()} ${months[d.getMonth()]}`;
+            } else {
+                const now = new Date();
+                dateStr = `${now.getDate()} ${months[now.getMonth()]}`;
+            }
+
+            let message = `SOP Perubahan Harga mingguan ${data.market || 'Pasar ...'} ${dateStr} :\n\n`;
+            data.items.forEach((item, i) => {
+                const statusText = translations[currentLang][item.status] || 'tetap';
+                message += `${i + 1}. ${item.commodity || '...'}: ${statusText}${item.cause ? ' karena ' + item.cause : ''}\n`;
+            });
+
+            const encodedMsg = encodeURIComponent(message);
+            const waUrl = `https://api.whatsapp.com/send?phone=${phone.replace(/^0/, '62')}&text=${encodedMsg}`;
+            window.open(waUrl, '_blank');
+        });
+    }
+
+    if (clearSopNoteBtn) {
+        clearSopNoteBtn.addEventListener('click', () => {
+            const confirmMsg = currentLang === 'id' ? 'Hapus semua?' : 'Clear all?';
+            if (confirm(confirmMsg)) {
+                sopDateInput.value = new Date().toISOString().split('T')[0];
+                sopMarketInput.value = '';
+                sopRowsContainer.innerHTML = '';
+                // Reset to defaults on clear
+                defaultSopCommodities.forEach(comm => {
+                    sopRowsContainer.appendChild(createSopRow(comm, 'opt-fixed', ''));
+                });
+                checkSopRemoveButtons();
+                localStorage.removeItem('user_sop_data_temp');
+            }
+        });
+    }
+
+    // --- Language Initial State ---
+    updateLanguage();
 
     // --- Interactive Cursor ---
     const cursor = document.getElementById('custom-cursor');
@@ -685,78 +1093,59 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function animateCursor() {
-        // Smooth cursor movement
         cursorX += (mouseX - cursorX) * 0.2;
         cursorY += (mouseY - cursorY) * 0.2;
-        cursor.style.left = cursorX + 'px';
-        cursor.style.top = cursorY + 'px';
+        if (cursor) {
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+        }
 
-        // Smooth follower movement
         followerX += (mouseX - followerX) * 0.1;
         followerY += (mouseY - followerY) * 0.1;
-        follower.style.left = (followerX - (follower.offsetWidth / 2)) + 'px';
-        follower.style.top = (followerY - (follower.offsetHeight / 2)) + 'px';
+        if (follower) {
+            follower.style.left = (followerX - (follower.offsetWidth / 2)) + 'px';
+            follower.style.top = (followerY - (follower.offsetHeight / 2)) + 'px';
+        }
 
         requestAnimationFrame(animateCursor);
     }
     animateCursor();
 
-    // Cursor hover effects
-    const interactiveElements = document.querySelectorAll('button, a, input, textarea, .nav-link');
+    const interactiveElements = document.querySelectorAll('button, a, input, textarea, select, .nav-link');
     interactiveElements.forEach(el => {
         el.addEventListener('mouseenter', () => {
             document.body.classList.add('cursor-hover');
-            gsap.to(cursor, { scale: 1.5, duration: 0.3 });
+            if (cursor) gsap.to(cursor, { scale: 1.5, duration: 0.3 });
         });
         el.addEventListener('mouseleave', () => {
             document.body.classList.remove('cursor-hover');
-            gsap.to(cursor, { scale: 1, duration: 0.3 });
+            if (cursor) gsap.to(cursor, { scale: 1, duration: 0.3 });
         });
     });
 
-    // --- Magnetic Buttons ---
+    // Magnetic Buttons
     const magneticBtns = document.querySelectorAll('.icon-btn, .menu-toggle, .btn-primary, .btn-secondary, .btn-whatsapp, .contact-cta');
     magneticBtns.forEach(btn => {
         btn.addEventListener('mousemove', (e) => {
             const rect = btn.getBoundingClientRect();
             const x = e.clientX - rect.left - rect.width / 2;
             const y = e.clientY - rect.top - rect.height / 2;
-
-            gsap.to(btn, {
-                x: x * 0.4,
-                y: y * 0.4,
-                duration: 0.3,
-                ease: "power2.out"
-            });
+            gsap.to(btn, { x: x * 0.4, y: y * 0.4, duration: 0.3, ease: "power2.out" });
         });
-
         btn.addEventListener('mouseleave', () => {
-            gsap.to(btn, {
-                x: 0,
-                y: 0,
-                duration: 0.5,
-                ease: "elastic.out(1, 0.3)"
-            });
+            gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
         });
     });
 
-    // --- Mouse Parallax for Headings ---
+    // Parallax
     window.addEventListener('mousemove', (e) => {
         const xPercent = (e.clientX / window.innerWidth) - 0.5;
         const yPercent = (e.clientY / window.innerHeight) - 0.5;
-
         scenes.forEach(scene => {
             const headings = scene.querySelectorAll('h1, h2');
             headings.forEach(h => {
-                gsap.to(h, {
-                    x: xPercent * 30,
-                    y: yPercent * 30,
-                    duration: 1,
-                    ease: "power2.out"
-                });
+                gsap.to(h, { x: xPercent * 30, y: yPercent * 30, duration: 1, ease: "power2.out" });
             });
         });
     });
-
-    // --- Matrix Background Animation --- (Disabled but kept for structure)
 });
