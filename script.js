@@ -139,7 +139,12 @@ document.addEventListener('DOMContentLoaded', () => {
             'title-sph-list': 'Price Change List',
             'label-status': 'Status',
             'status-naik': 'Rise',
-            'status-turun': 'Fall'
+            'status-turun': 'Fall',
+            // Hero Labels
+            'label-pihps': 'PIHPS',
+            'label-sop': 'SOP',
+            'label-sph': 'SPH',
+            'label-notes': 'NOTES'
         },
         'id': {
             'nav-home': 'BERANDA',
@@ -194,7 +199,12 @@ document.addEventListener('DOMContentLoaded', () => {
             'title-sph-list': 'Daftar Perubahan Harga',
             'label-status': 'Status',
             'status-naik': 'Naik',
-            'status-turun': 'Turun'
+            'status-turun': 'Turun',
+            // Hero Labels
+            'label-pihps': 'PIHPS',
+            'label-sop': 'SOP',
+            'label-sph': 'SPH',
+            'label-notes': 'CATATAN'
         }
     };
 
