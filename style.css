@@ -1261,6 +1261,31 @@ p {
         font-size: 1.1rem;
     }
 
+    /* Mobile Hero Improvements */
+    .hero-actions {
+        gap: 1.2rem;
+        /* Reduce gap on mobile */
+        margin-bottom: 2rem;
+        justify-content: center;
+    }
+
+    .action-item {
+        gap: 0.5rem;
+    }
+
+    .hero-note-btn {
+        width: 50px;
+        /* Smaller buttons */
+        height: 50px;
+        font-size: 1.2rem;
+    }
+
+    .action-label {
+        font-size: 0.65rem;
+        /* Smaller label text */
+        letter-spacing: 0.5px;
+    }
+
     .note-inputs {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.8rem;

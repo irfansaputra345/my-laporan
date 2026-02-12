@@ -1323,11 +1323,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle all open-sph-modal buttons (including hero button)
     document.querySelectorAll('.open-sph-modal').forEach(btn => {
-        btn.addEventListener('click', () => {
-            sphModal.classList.add('active');
-            // Set default date to today
-            if (sphDateInput && !sphDateInput.value) {
-                sphDateInput.value = new Date().toISOString().split('T')[0];
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const modal = document.getElementById('sph-modal');
+            if (modal) {
+                modal.classList.add('active');
+
+                // Set default date to today
+                const dateInput = document.getElementById('sph-date');
+                if (dateInput && !dateInput.value) {
+                    dateInput.value = new Date().toISOString().split('T')[0];
+                }
+
+                // Ensure at least one row exists
+                const container = document.getElementById('sph-rows-container');
+                if (container && container.children.length === 0) {
+                    container.appendChild(createSphRow());
+                    checkSphRemoveButtons();
+                }
             }
         });
     });
