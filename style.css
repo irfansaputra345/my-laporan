@@ -1440,3 +1440,77 @@ p {
     transform: scale(1.1);
     background: #128C7E;
 }
+
+/* SPH Row Styles */
+.sph-row {
+    display: grid;
+    grid-template-columns: 1fr 0.8fr 1.5fr auto;
+    gap: 1rem;
+    align-items: flex-end;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.sph-row:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.sph-row .input-group {
+    margin-bottom: 0;
+}
+
+/* Mobile responsive for sph-row */
+@media (max-width: 768px) {
+    .sph-row {
+        grid-template-columns: 1fr 1fr;
+        /* Commodity and Status on top */
+    }
+
+    .sph-row .input-group:nth-child(3) {
+        grid-column: span 2;
+        /* Anecdotal full width below */
+    }
+
+    .sph-row .remove-row-btn {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        width: 24px;
+        height: 24px;
+        font-size: 0.7rem;
+        background: var(--accent-color);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+}
+
+/* Auto-Expand Textarea Styles */
+textarea.auto-expand {
+    min-height: 38px;
+    height: auto;
+    resize: none;
+    overflow-y: hidden;
+    padding: 0.6rem;
+    line-height: 1.4;
+    font-family: var(--font-body);
+}
+
+.input-group textarea {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #fff;
+    width: 100%;
+}
+
+.input-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 0 3px rgba(218, 41, 28, 0.15);
+}

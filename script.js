@@ -140,6 +140,8 @@ document.addEventListener('DOMContentLoaded', () => {
             'label-status': 'Status',
             'status-naik': 'Rise',
             'status-turun': 'Fall',
+            'label-anecdotal': 'Anecdotal/Cause',
+            'placeholder-anecdotal': 'Cause/Reason...',
             // Hero Labels
             'label-pihps': 'PIHPS',
             'label-sop': 'SOP',
@@ -200,6 +202,8 @@ document.addEventListener('DOMContentLoaded', () => {
             'label-status': 'Status',
             'status-naik': 'Naik',
             'status-turun': 'Turun',
+            'label-anecdotal': 'Keterangan/Penyebab',
+            'placeholder-anecdotal': 'Penyebab/Alasan...',
             // Hero Labels
             'label-pihps': 'PIHPS',
             'label-sop': 'SOP',
@@ -423,6 +427,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Note Feature ---
     // (Variables defined at top)
 
+    function autoResize(element) {
+        element.style.height = 'auto';
+        element.style.height = element.scrollHeight + 'px';
+    }
+
     function createFindingRow(merchant = '', commodity = '', cause = '') {
         const row = document.createElement('div');
         row.className = 'finding-row';
@@ -439,8 +448,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="input-group">
                 <label data-key="label-cause">${translations[currentLang]['label-cause']}</label>
-                <input type="text" class="cause-input" data-placeholder="placeholder-cause" 
-                    placeholder="${translations[currentLang]['placeholder-cause']}" value="${cause}">
+                <textarea class="cause-input auto-expand" data-placeholder="placeholder-cause" 
+                    placeholder="${translations[currentLang]['placeholder-cause']}" rows="1">${cause}</textarea>
             </div>
             <button class="remove-finding-btn"><i class="fas fa-trash"></i></button>
         `;
@@ -451,9 +460,18 @@ document.addEventListener('DOMContentLoaded', () => {
             autoSaveNote();
         });
 
-        row.querySelectorAll('input').forEach(input => {
-            input.addEventListener('input', autoSaveNote);
+        row.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('input', () => {
+                autoSaveNote();
+                if (input.classList.contains('auto-expand')) {
+                    autoResize(input);
+                }
+            });
         });
+
+        // Initialize resize
+        const textarea = row.querySelector('textarea');
+        if (textarea) setTimeout(() => autoResize(textarea), 0);
 
         return row;
     }
@@ -666,6 +684,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <div class="report-item">
                                         <strong>${item.commodity || '...'}</strong>: 
                                         <span class="sop-status-pill ${statusClass}">${statusText}</span>
+                                        ${item.anecdotal ? `<div style="margin-top: 4px; font-size: 0.85rem; opacity: 0.7;">${item.anecdotal}</div>` : ''}
                                     </div>
                                 `;
                 }).join('') : '<div class="report-item">No items</div>'}
@@ -1053,8 +1072,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="input-group">
                 <label data-key="label-cause">${translations[currentLang]['label-cause']}</label>
-                <input type="text" class="sop-cause-input" data-placeholder="placeholder-cause" 
-                    placeholder="${translations[currentLang]['placeholder-cause']}" value="${cause}">
+                <textarea class="sop-cause-input auto-expand" data-placeholder="placeholder-cause" 
+                    placeholder="${translations[currentLang]['placeholder-cause']}" rows="1">${cause}</textarea>
             </div>
             <button class="remove-sop-row-btn remove-finding-btn"><i class="fas fa-trash"></i></button>
         `;
@@ -1065,9 +1084,17 @@ document.addEventListener('DOMContentLoaded', () => {
             autoSaveSop();
         });
 
-        row.querySelectorAll('input, select').forEach(el => {
-            el.addEventListener('input', autoSaveSop);
+        row.querySelectorAll('input, select, textarea').forEach(el => {
+            el.addEventListener('input', () => {
+                autoSaveSop();
+                if (el.classList.contains('auto-expand')) {
+                    autoResize(el);
+                }
+            });
         });
+
+        const textarea = row.querySelector('textarea');
+        if (textarea) setTimeout(() => autoResize(textarea), 0);
 
         return row;
     }
@@ -1269,7 +1296,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- SPH Logic ---
-    function createSphRow(commodity = '', status = 'status-naik') {
+    function createSphRow(commodity = '', status = 'status-naik', anecdotal = '') {
         const row = document.createElement('div');
         row.className = 'sph-row';
         // Note: status values match keys in translations: 'status-naik', 'status-turun'
@@ -1286,6 +1313,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <option value="status-turun" ${status === 'status-turun' ? 'selected' : ''}>${translations[currentLang]['status-turun']}</option>
                 </select>
             </div>
+            <div class="input-group">
+                <label data-key="label-anecdotal">${translations[currentLang]['label-anecdotal']}</label>
+                <textarea class="anecdotal-input auto-expand" data-placeholder="placeholder-anecdotal" 
+                    placeholder="${translations[currentLang]['placeholder-anecdotal']}" rows="1">${anecdotal}</textarea>
+            </div>
             <button class="remove-row-btn"><i class="fas fa-trash"></i></button>
         `;
 
@@ -1293,6 +1325,18 @@ document.addEventListener('DOMContentLoaded', () => {
             row.remove();
             checkSphRemoveButtons();
         });
+
+        row.querySelectorAll('input, select, textarea').forEach(el => {
+            el.addEventListener('input', () => {
+                // SPH doesn't have auto-save yet, but we enable resize
+                if (el.classList.contains('auto-expand')) {
+                    autoResize(el);
+                }
+            });
+        });
+
+        const textarea = row.querySelector('textarea');
+        if (textarea) setTimeout(() => autoResize(textarea), 0);
 
         return row;
     }
@@ -1386,7 +1430,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sphRowsContainer.querySelectorAll('.sph-row').forEach(row => {
             items.push({
                 commodity: row.querySelector('.commodity-input').value,
-                status: row.querySelector('.status-select').value
+                status: row.querySelector('.status-select').value,
+                anecdotal: row.querySelector('.anecdotal-input').value
             });
         });
 
@@ -1441,19 +1486,19 @@ document.addEventListener('DOMContentLoaded', () => {
             message += `Tanggal: ${waDateStr}\n\n`;
 
             // Group by Naik/Turun
-            const naik = data.items.filter(i => i.status === 'status-naik').map(i => i.commodity);
-            const turun = data.items.filter(i => i.status === 'status-turun').map(i => i.commodity);
+            const naik = data.items.filter(i => i.status === 'status-naik').map(i => ({ name: i.commodity, note: i.anecdotal }));
+            const turun = data.items.filter(i => i.status === 'status-turun').map(i => ({ name: i.commodity, note: i.anecdotal }));
 
             message += `*Komoditas Naik:*\n`;
             if (naik.length > 0) {
-                naik.forEach(c => message += `- ${c}\n`);
+                naik.forEach(c => message += `- ${c.name}${c.note ? ' (' + c.note + ')' : ''}\n`);
             } else {
                 message += `- (Nihil)\n`;
             }
 
             message += `\n*Komoditas Turun:*\n`;
             if (turun.length > 0) {
-                turun.forEach(c => message += `- ${c}\n`);
+                turun.forEach(c => message += `- ${c.name}${c.note ? ' (' + c.note + ')' : ''}\n`);
             } else {
                 message += `- (Nihil)\n`;
             }
@@ -1495,7 +1540,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const naik = data.items.filter(i => i.status === 'status-naik');
             if (naik.length > 0) {
                 naik.forEach(item => {
-                    doc.text(`- ${item.commodity}`, 15, yPos);
+                    doc.text(`- ${item.commodity}${item.anecdotal ? ' (' + item.anecdotal + ')' : ''}`, 15, yPos);
                     yPos += 6;
                 });
             } else {
@@ -1514,7 +1559,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const turun = data.items.filter(i => i.status === 'status-turun');
             if (turun.length > 0) {
                 turun.forEach(item => {
-                    doc.text(`- ${item.commodity}`, 15, yPos);
+                    doc.text(`- ${item.commodity}${item.anecdotal ? ' (' + item.anecdotal + ')' : ''}`, 15, yPos);
                     yPos += 6;
                 });
             } else {
@@ -1538,7 +1583,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             html += `<h3>Komoditas Naik</h3><ul>`;
             if (naik.length > 0) {
-                naik.forEach(i => html += `<li>${i.commodity}</li>`);
+                naik.forEach(i => html += `<li>${i.commodity} ${i.anecdotal ? '(' + i.anecdotal + ')' : ''}</li>`);
             } else {
                 html += `<li>(Nihil)</li>`;
             }
@@ -1546,7 +1591,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             html += `<h3>Komoditas Turun</h3><ul>`;
             if (turun.length > 0) {
-                turun.forEach(i => html += `<li>${i.commodity}</li>`);
+                turun.forEach(i => html += `<li>${i.commodity} ${i.anecdotal ? '(' + i.anecdotal + ')' : ''}</li>`);
             } else {
                 html += `<li>(Nihil)</li>`;
             }
