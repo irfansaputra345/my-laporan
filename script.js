@@ -312,71 +312,53 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Background Video Support ---
-    const bgVideo1 = document.getElementById('bg-video');
-    const bgVideo2 = document.getElementById('bg-video-2');
-    let activeVideo = bgVideo1;
-    let inactiveVideo = bgVideo2;
+    // --- Background Modern Display ---
+    const modernBg = document.getElementById('modern-bg');
+    const bgOverlay = document.querySelector('.bg-overlay');
 
-    // Ensure playback on all browsers
-    if (bgVideo1) bgVideo1.play().catch(() => { });
+    // Subtle parallax effect on mouse move
+    window.addEventListener('mousemove', (e) => {
+        if (!modernBg) return;
+        const x = (e.clientX / window.innerWidth - 0.5) * 20; // max 10px move
+        const y = (e.clientY / window.innerHeight - 0.5) * 20;
 
-    // Define video sources for each section
-    const sectionVideos = {
-        'scene-hero': 'videos/WhatsApp Video 2026-02-10 at 22.15.07.mp4',
-        'scene-concept': 'videos/WhatsApp Video 2026-02-10 at 22.15.07.mp4',
-        'scene-experience': 'videos/WhatsApp Video 2026-02-10 at 22.15.07.mp4',
-        'scene-contact': 'videos/WhatsApp Video 2026-02-10 at 22.15.07.mp4'
+        gsap.to(modernBg, {
+            x: x,
+            y: y,
+            duration: 1,
+            ease: 'power1.out'
+        });
+    });
+
+    // Define colors for each section to shift the mesh gradient
+    const sectionThemes = {
+        'scene-hero': { accent: 'rgba(218, 41, 28, 0.15)', gold: 'rgba(251, 225, 34, 0.1)' },
+        'scene-concept': { accent: 'rgba(0, 188, 212, 0.15)', gold: 'rgba(255, 255, 255, 0.05)' },
+        'scene-experience': { accent: 'rgba(156, 39, 176, 0.15)', gold: 'rgba(218, 41, 28, 0.1)' },
+        'scene-contact': { accent: 'rgba(218, 41, 28, 0.15)', gold: 'rgba(251, 225, 34, 0.1)' }
     };
 
-    function switchVideo(newSource) {
-        if (activeVideo.getAttribute('src') === newSource) return; // Prevent redundant switches
+    function updateBackgroundTheme(sceneId) {
+        if (!bgOverlay || !sectionThemes[sceneId]) return;
+        const theme = sectionThemes[sceneId];
 
-        // Set source for the inactive video
-        const sourceElement = inactiveVideo.querySelector('source');
-        if (sourceElement) {
-            sourceElement.src = newSource;
-            inactiveVideo.load();
-            inactiveVideo.play().then(() => {
-                // Crossfade
-                gsap.to(inactiveVideo, { opacity: 0.8, duration: 1 });
-                gsap.to(activeVideo, { opacity: 0, duration: 1 });
-
-                // Swap active content
-                const temp = activeVideo;
-                activeVideo = inactiveVideo;
-                inactiveVideo = temp;
-            }).catch(err => console.error("Video play failed:", err));
-        }
+        gsap.to(bgOverlay, {
+            background: `radial-gradient(circle at 20% 30%, ${theme.accent} 0%, transparent 50%),
+                         radial-gradient(circle at 80% 70%, ${theme.gold} 0%, transparent 50%),
+                         radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.8) 100%)`,
+            duration: 1.5,
+            ease: 'power2.inOut'
+        });
     }
 
-    // ScrollTrigger for background changes
-    ScrollTrigger.create({
-        trigger: "#scene-hero",
-        start: "top center",
-        onEnter: () => switchVideo(sectionVideos['scene-hero']),
-        onEnterBack: () => switchVideo(sectionVideos['scene-hero'])
-    });
-
-    ScrollTrigger.create({
-        trigger: "#scene-concept",
-        start: "top center",
-        onEnter: () => switchVideo(sectionVideos['scene-concept']),
-        onEnterBack: () => switchVideo(sectionVideos['scene-concept'])
-    });
-
-    ScrollTrigger.create({
-        trigger: "#scene-experience",
-        start: "top center",
-        onEnter: () => switchVideo(sectionVideos['scene-experience']),
-        onEnterBack: () => switchVideo(sectionVideos['scene-experience'])
-    });
-
-    ScrollTrigger.create({
-        trigger: "#scene-contact",
-        start: "top center",
-        onEnter: () => switchVideo(sectionVideos['scene-contact']),
-        onEnterBack: () => switchVideo(sectionVideos['scene-contact'])
+    // ScrollTrigger for background theme changes
+    Object.keys(sectionThemes).forEach(sceneId => {
+        ScrollTrigger.create({
+            trigger: `#${sceneId}`,
+            start: "top center",
+            onEnter: () => updateBackgroundTheme(sceneId),
+            onEnterBack: () => updateBackgroundTheme(sceneId)
+        });
     });
 
     // --- Particle Background (Removed) ---
@@ -1205,48 +1187,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Language Initial State ---
     updateLanguage();
 
-    // --- Interactive Cursor ---
-    const cursor = document.getElementById('custom-cursor');
-    const follower = document.getElementById('cursor-follower');
-    let mouseX = 0, mouseY = 0;
-    let cursorX = 0, cursorY = 0;
-    let followerX = 0, followerY = 0;
-
-    window.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    });
-
-    function animateCursor() {
-        cursorX += (mouseX - cursorX) * 0.2;
-        cursorY += (mouseY - cursorY) * 0.2;
-        if (cursor) {
-            cursor.style.left = cursorX + 'px';
-            cursor.style.top = cursorY + 'px';
-        }
-
-        followerX += (mouseX - followerX) * 0.1;
-        followerY += (mouseY - followerY) * 0.1;
-        if (follower) {
-            follower.style.left = (followerX - (follower.offsetWidth / 2)) + 'px';
-            follower.style.top = (followerY - (follower.offsetHeight / 2)) + 'px';
-        }
-
-        requestAnimationFrame(animateCursor);
-    }
-    animateCursor();
-
-    const interactiveElements = document.querySelectorAll('button, a, input, textarea, select, .nav-link');
-    interactiveElements.forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            document.body.classList.add('cursor-hover');
-            if (cursor) gsap.to(cursor, { scale: 1.5, duration: 0.3 });
-        });
-        el.addEventListener('mouseleave', () => {
-            document.body.classList.remove('cursor-hover');
-            if (cursor) gsap.to(cursor, { scale: 1, duration: 0.3 });
-        });
-    });
+    // --- Magnetic Buttons ---
 
     // Magnetic Buttons
     const magneticBtns = document.querySelectorAll('.icon-btn, .menu-toggle, .btn-primary, .btn-secondary, .btn-whatsapp, .contact-cta');
