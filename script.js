@@ -71,6 +71,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadSopWordBtn = document.getElementById('download-sop-word');
     const clearSopNoteBtn = document.getElementById('clear-sop-note');
 
+    // --- SPH Note Elements ---
+    const sphModal = document.getElementById('sph-modal');
+    const closeSph = document.getElementById('close-sph');
+    const sphDateInput = document.getElementById('sph-date');
+    const sphRowsContainer = document.getElementById('sph-rows-container');
+    const addSphRowBtn = document.getElementById('add-sph-row-btn');
+    const saveSphNoteBtn = document.getElementById('save-sph-note');
+    const whatsappSphBtn = document.getElementById('whatsapp-sph');
+    const downloadSphBtn = document.getElementById('download-sph');
+    const downloadSphWordBtn = document.getElementById('download-sph-word');
+    const clearSphNoteBtn = document.getElementById('clear-sph-note');
+    const navSphTrigger = document.getElementById('nav-sph-trigger');
+
     // --- Translation Data ---
     const translations = {
         'en': {
@@ -120,7 +133,13 @@ document.addEventListener('DOMContentLoaded', () => {
             'gen-modal-title': 'General Notes',
             'label-gen-title': 'Title',
             'label-gen-content': 'Note Content',
-            'saved': '<i class="fas fa-check"></i> Saved!'
+            'saved': '<i class="fas fa-check"></i> Saved!',
+            'nav-sph-notes': 'SPH REPORTS',
+            'sph-modal-title': 'SPH Report',
+            'title-sph-list': 'Price Change List',
+            'label-status': 'Status',
+            'status-naik': 'Rise',
+            'status-turun': 'Fall'
         },
         'id': {
             'nav-home': 'BERANDA',
@@ -169,7 +188,13 @@ document.addEventListener('DOMContentLoaded', () => {
             'opt-fixed': 'tetap',
             'opt-up': 'naik',
             'opt-down': 'turun',
-            'saved': '<i class="fas fa-check"></i> Tersimpan!'
+            'saved': '<i class="fas fa-check"></i> Tersimpan!',
+            'nav-sph-notes': 'LAPORAN SPH',
+            'sph-modal-title': 'Laporan SPH',
+            'title-sph-list': 'Daftar Perubahan Harga',
+            'label-status': 'Status',
+            'status-naik': 'Naik',
+            'status-turun': 'Turun'
         }
     };
 
@@ -611,6 +636,34 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="report-notes" style="flex: 1; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 10px;">
                             ${note.content || note.note || ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (note.type === 'sph') {
+                return `
+                    <div class="report-card sph-report-card">
+                        <div class="report-header">
+                            <div class="report-title"><i class="fas fa-list-ol"></i> SPH REPORT</div>
+                            <div class="report-date">${cardDateStr}</div>
+                        </div>
+                        <div class="report-items-list">
+                            ${note.items ? note.items.map((item, i) => {
+                    const statusClass = item.status === 'status-naik' ? 'status-up' : 'status-down';
+                    const statusText = translations[currentLang][item.status] || item.status;
+                    return `
+                                    <div class="report-item">
+                                        <strong>${item.commodity || '...'}</strong>: 
+                                        <span class="sop-status-pill ${statusClass}">${statusText}</span>
+                                    </div>
+                                `;
+                }).join('') : '<div class="report-item">No items</div>'}
+                        </div>
+                        <div class="report-footer" style="justify-content: flex-end;">
+                             <button class="card-wa-btn" onclick="window.open('https://api.whatsapp.com/send?phone=6285927326555&text=${encodeURIComponent(`Laporan SPH ${cardDateStr} :\n\nKomoditas Naik:\n` + (note.items.filter(i => i.status === 'status-naik').map(i => `- ${i.commodity}`).join('\n') || '- (Nihil)') + `\n\nKomoditas Turun:\n` + (note.items.filter(i => i.status === 'status-turun').map(i => `- ${i.commodity}`).join('\n') || '- (Nihil)'))}', '_blank')">
+                                <i class="fab fa-whatsapp"></i>
+                             </button>
                         </div>
                     </div>
                 `;
@@ -1202,6 +1255,292 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             html += `</tbody></table>`;
             downloadAsWord(`SOP-${Date.now()}.doc`, html);
+        });
+    }
+
+    // --- SPH Logic ---
+    function createSphRow(commodity = '', status = 'status-naik') {
+        const row = document.createElement('div');
+        row.className = 'sph-row';
+        // Note: status values match keys in translations: 'status-naik', 'status-turun'
+        row.innerHTML = `
+            <div class="input-group">
+                <label data-key="label-commodity">${translations[currentLang]['label-commodity']}</label>
+                <input type="text" class="commodity-input" data-placeholder="placeholder-commodity" 
+                    placeholder="${translations[currentLang]['placeholder-commodity']}" value="${commodity}">
+            </div>
+            <div class="input-group">
+                <label data-key="label-status">${translations[currentLang]['label-status']}</label>
+                <select class="status-select">
+                    <option value="status-naik" ${status === 'status-naik' ? 'selected' : ''}>${translations[currentLang]['status-naik']}</option>
+                    <option value="status-turun" ${status === 'status-turun' ? 'selected' : ''}>${translations[currentLang]['status-turun']}</option>
+                </select>
+            </div>
+            <button class="remove-row-btn"><i class="fas fa-trash"></i></button>
+        `;
+
+        row.querySelector('.remove-row-btn').addEventListener('click', () => {
+            row.remove();
+            checkSphRemoveButtons();
+        });
+
+        return row;
+    }
+
+    function checkSphRemoveButtons() {
+        const rows = sphRowsContainer.querySelectorAll('.sph-row');
+        rows.forEach(row => {
+            const btn = row.querySelector('.remove-row-btn');
+            btn.style.display = rows.length > 1 ? 'flex' : 'none';
+        });
+    }
+
+    if (addSphRowBtn) {
+        addSphRowBtn.addEventListener('click', () => {
+            sphRowsContainer.appendChild(createSphRow());
+            checkSphRemoveButtons();
+        });
+    }
+
+    // Initial SPH Row
+    if (sphRowsContainer) {
+        sphRowsContainer.appendChild(createSphRow());
+        checkSphRemoveButtons();
+    }
+
+    // Open SPH Modal
+    if (navSphTrigger) {
+        navSphTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            nav.classList.remove('active');
+            sphModal.classList.add('active');
+            // Set default date to today
+            if (sphDateInput && !sphDateInput.value) {
+                sphDateInput.value = new Date().toISOString().split('T')[0];
+            }
+        });
+    }
+
+    // Handle all open-sph-modal buttons (including hero button)
+    document.querySelectorAll('.open-sph-modal').forEach(btn => {
+        btn.addEventListener('click', () => {
+            sphModal.classList.add('active');
+            // Set default date to today
+            if (sphDateInput && !sphDateInput.value) {
+                sphDateInput.value = new Date().toISOString().split('T')[0];
+            }
+        });
+    });
+
+    if (closeSph) {
+        closeSph.addEventListener('click', () => {
+            sphModal.classList.remove('active');
+        });
+    }
+
+    window.addEventListener('click', (e) => {
+        if (e.target === sphModal) {
+            sphModal.classList.remove('active');
+        }
+    });
+
+    if (clearSphNoteBtn) {
+        clearSphNoteBtn.addEventListener('click', () => {
+            const confirmMsg = currentLang === 'id'
+                ? 'Apakah Anda yakin ingin menghapus semua isi?'
+                : 'Are you sure you want to clear all contents?';
+            if (!confirm(confirmMsg)) return;
+
+            if (sphDateInput) sphDateInput.value = new Date().toISOString().split('T')[0];
+            sphRowsContainer.innerHTML = '';
+            sphRowsContainer.appendChild(createSphRow());
+            checkSphRemoveButtons();
+        });
+    }
+
+    function getSphData() {
+        const items = [];
+        sphRowsContainer.querySelectorAll('.sph-row').forEach(row => {
+            items.push({
+                commodity: row.querySelector('.commodity-input').value,
+                status: row.querySelector('.status-select').value
+            });
+        });
+
+        return {
+            type: 'sph',
+            date: sphDateInput.value,
+            items: items
+        };
+    }
+
+    if (saveSphNoteBtn) {
+        saveSphNoteBtn.addEventListener('click', () => {
+            try {
+                const currentData = getSphData();
+                // We'll save SPH reports in the same 'user_reports' array but with type='sph'
+                const reports = JSON.parse(localStorage.getItem('user_reports') || '[]');
+                reports.unshift(currentData);
+                localStorage.setItem('user_reports', JSON.stringify(reports));
+
+                console.log('SPH data saved');
+                renderReports();
+
+                const originalHTML = saveSphNoteBtn.innerHTML;
+                saveSphNoteBtn.innerHTML = translations[currentLang]['saved'];
+                saveSphNoteBtn.classList.add('saved');
+                setTimeout(() => {
+                    saveSphNoteBtn.innerHTML = originalHTML;
+                    saveSphNoteBtn.classList.remove('saved');
+                }, 2000);
+            } catch (err) {
+                console.error(err);
+                alert('Failed to save SPH report.');
+            }
+        });
+    }
+
+    if (whatsappSphBtn) {
+        whatsappSphBtn.addEventListener('click', () => {
+            const data = getSphData();
+            const phone = "087847712990";
+            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+            let waDateStr;
+            if (data.date) {
+                const dateObj = new Date(data.date);
+                waDateStr = `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+            } else {
+                waDateStr = '-';
+            }
+
+            let message = `*Laporan SPH*\n`;
+            message += `Tanggal: ${waDateStr}\n\n`;
+
+            // Group by Naik/Turun
+            const naik = data.items.filter(i => i.status === 'status-naik').map(i => i.commodity);
+            const turun = data.items.filter(i => i.status === 'status-turun').map(i => i.commodity);
+
+            message += `*Komoditas Naik:*\n`;
+            if (naik.length > 0) {
+                naik.forEach(c => message += `- ${c}\n`);
+            } else {
+                message += `- (Nihil)\n`;
+            }
+
+            message += `\n*Komoditas Turun:*\n`;
+            if (turun.length > 0) {
+                turun.forEach(c => message += `- ${c}\n`);
+            } else {
+                message += `- (Nihil)\n`;
+            }
+
+            window.open(`https://api.whatsapp.com/send?phone=${phone.replace(/^0/, '62')}&text=${encodeURIComponent(message)}`, '_blank');
+        });
+    }
+
+    if (downloadSphBtn) {
+        downloadSphBtn.addEventListener('click', () => {
+            if (typeof window.jspdf === 'undefined') return;
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const data = getSphData();
+
+            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            let dateStr = '-';
+            if (data.date) {
+                const d = new Date(data.date);
+                dateStr = `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+            }
+
+            doc.setFont("Helvetica", "bold");
+            doc.setFontSize(14);
+            doc.text("LAPORAN SPH", 10, 20);
+
+            doc.setFontSize(11);
+            doc.setFont("Helvetica", "normal");
+            doc.text(`Tanggal: ${dateStr}`, 10, 30);
+
+            let yPos = 45;
+
+            // Naik
+            doc.setFont("Helvetica", "bold");
+            doc.text("Komoditas Naik:", 10, yPos);
+            yPos += 7;
+            doc.setFont("Helvetica", "normal");
+
+            const naik = data.items.filter(i => i.status === 'status-naik');
+            if (naik.length > 0) {
+                naik.forEach(item => {
+                    doc.text(`- ${item.commodity}`, 15, yPos);
+                    yPos += 6;
+                });
+            } else {
+                doc.text("- (Nihil)", 15, yPos);
+                yPos += 6;
+            }
+
+            yPos += 5;
+
+            // Turun
+            doc.setFont("Helvetica", "bold");
+            doc.text("Komoditas Turun:", 10, yPos);
+            yPos += 7;
+            doc.setFont("Helvetica", "normal");
+
+            const turun = data.items.filter(i => i.status === 'status-turun');
+            if (turun.length > 0) {
+                turun.forEach(item => {
+                    doc.text(`- ${item.commodity}`, 15, yPos);
+                    yPos += 6;
+                });
+            } else {
+                doc.text("- (Nihil)", 15, yPos);
+                yPos += 6;
+            }
+
+            doc.save(`Laporan-SPH-${Date.now()}.pdf`);
+        });
+    }
+
+    if (downloadSphWordBtn) {
+        downloadSphWordBtn.addEventListener('click', () => {
+            const data = getSphData();
+            const naik = data.items.filter(i => i.status === 'status-naik');
+            const turun = data.items.filter(i => i.status === 'status-turun');
+
+            let html = `<h1>LAPORAN SPH</h1>
+                        <p><strong>Tanggal:</strong> ${data.date}</p>
+                        <hr>`;
+
+            html += `<h3>Komoditas Naik</h3><ul>`;
+            if (naik.length > 0) {
+                naik.forEach(i => html += `<li>${i.commodity}</li>`);
+            } else {
+                html += `<li>(Nihil)</li>`;
+            }
+            html += `</ul>`;
+
+            html += `<h3>Komoditas Turun</h3><ul>`;
+            if (turun.length > 0) {
+                turun.forEach(i => html += `<li>${i.commodity}</li>`);
+            } else {
+                html += `<li>(Nihil)</li>`;
+            }
+            html += `</ul>`;
+
+            const blob = new Blob(['\ufeff', `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head><meta charset='utf-8'><title>Laporan SPH</title></head><body>${html}</body></html>
+            `], { type: 'application/msword' });
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `Laporan-SPH-${Date.now()}.doc`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         });
     }
 

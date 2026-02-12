@@ -51,6 +51,7 @@
             <li><a href="#" class="nav-link" data-index="2" data-key="nav-exp">EXPERIENCE</a></li>
             <li><a href="#" class="nav-link" id="nav-note-trigger" data-key="nav-notes">PIHPS REPORTS</a></li>
             <li><a href="#" class="nav-link" id="nav-sop-trigger" data-key="nav-sop-notes">SOP PRICE CHANGE</a></li>
+            <li><a href="#" class="nav-link" id="nav-sph-trigger" data-key="nav-sph-notes">SPH REPORTS</a></li>
             <li><a href="#" class="nav-link" id="nav-gen-note-trigger" data-key="nav-gen-notes">GENERAL NOTES</a></li>
             <li><a href="#" class="nav-link" data-index="3" data-key="nav-contact">CONTACT</a></li>
         </ul>
@@ -65,20 +66,37 @@
                 <h1 class="fade-up" data-key="hero-title">CATAT TEMUAN <br> HARI INI
                 </h1>
                 <div class="hero-actions fade-up">
-                    <button class="icon-btn hero-note-btn open-note-modal" title="Add Pihps Report"
-                        data-tooltip="PIHPS Report" data-tooltip-key="tooltip-pihps">
-                        <i class="fas fa-file-invoice"></i>
-                    </button>
-                    <button class="icon-btn hero-note-btn open-sop-modal" title="Add SOP Price Change"
-                        style="border-color: #00bcd4; color: #00bcd4;" data-tooltip="SOP Price Change"
-                        data-tooltip-key="tooltip-sop">
-                        <i class="fas fa-chart-column"></i>
-                    </button>
-                    <button class="icon-btn hero-note-btn open-gen-note-modal" title="Add General Note"
-                        style="border-color: var(--gold-color); color: var(--gold-color);" data-tooltip="General Note"
-                        data-tooltip-key="tooltip-gen">
-                        <i class="fas fa-pen-fancy"></i>
-                    </button>
+                    <div class="action-item">
+                        <button class="icon-btn hero-note-btn open-note-modal" title="Add Pihps Report"
+                            data-tooltip="PIHPS Report" data-tooltip-key="tooltip-pihps">
+                            <i class="fas fa-file-invoice"></i>
+                        </button>
+                        <span class="action-label">PIHPS</span>
+                    </div>
+                    <div class="action-item">
+                        <button class="icon-btn hero-note-btn open-sop-modal" title="Add SOP Price Change"
+                            style="border-color: #00bcd4; color: #00bcd4;" data-tooltip="SOP Price Change"
+                            data-tooltip-key="tooltip-sop">
+                            <i class="fas fa-chart-column"></i>
+                        </button>
+                        <span class="action-label">SOP</span>
+                    </div>
+                    <div class="action-item">
+                        <button class="icon-btn hero-note-btn open-sph-modal" title="Add SPH Report"
+                            style="border-color: #9c27b0; color: #9c27b0;" data-tooltip="SPH Report"
+                            data-tooltip-key="tooltip-sph">
+                            <i class="fas fa-list-ol"></i>
+                        </button>
+                        <span class="action-label">SPH</span>
+                    </div>
+                    <div class="action-item">
+                        <button class="icon-btn hero-note-btn open-gen-note-modal" title="Add General Note"
+                            style="border-color: var(--gold-color); color: var(--gold-color);"
+                            data-tooltip="General Note" data-tooltip-key="tooltip-gen">
+                            <i class="fas fa-pen-fancy"></i>
+                        </button>
+                        <span class="action-label">NOTES</span>
+                    </div>
                 </div>
                 <div class="scroll-indicator fade-up">
                     <div class="mouse"></div>
@@ -281,6 +299,61 @@
                     <i class="fas fa-file-pdf"></i> PDF
                 </button>
                 <button id="download-sop-word" class="btn-secondary" data-key="btn-word">
+                    <i class="fas fa-file-word"></i> Word
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SPH Report Modal -->
+    <div id="sph-modal" class="modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3 data-key="sph-modal-title">Laporan SPH</h3>
+                <div class="modal-header-actions">
+                    <button id="clear-sph-note" class="btn-clear" title="Clear All" data-key="title-clear"
+                        data-tooltip="Clear all">
+                        <i class="fas fa-broom"></i>
+                    </button>
+                    <button class="close-modal" id="close-sph">&times;</button>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h4 class="section-title"><i class="fas fa-calendar-day"></i> <span data-key="label-date">Date</span>
+                </h4>
+                <div class="note-inputs">
+                    <div class="input-group">
+                        <label data-key="label-date">Date</label>
+                        <input type="date" id="sph-date">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h4 class="section-title"><i class="fas fa-list-ol"></i> <span data-key="title-sph-list">Daftar
+                        Perubahan Harga</span></h4>
+                <div id="sph-rows-container">
+                    <!-- SPH Rows will be dynamic -->
+                </div>
+                <div class="row-actions">
+                    <button id="add-sph-row-btn" class="btn-secondary">
+                        <i class="fas fa-plus"></i> <span data-key="btn-add-item">Add Item</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-actions-list">
+                <button id="save-sph-note" class="btn-primary" data-key="btn-save">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <button id="whatsapp-sph" class="btn-whatsapp" data-key="btn-whatsapp">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+                <button id="download-sph" class="btn-secondary" data-key="btn-pdf">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </button>
+                <button id="download-sph-word" class="btn-secondary" data-key="btn-word">
                     <i class="fas fa-file-word"></i> Word
                 </button>
             </div>
