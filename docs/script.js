@@ -596,7 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     whatsappNoteBtn.addEventListener('click', () => {
         const data = getNoteData();
-        const phone = "085927326555";
+        const phone = "087847712990";
 
         // Format date from input or use current date
         const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
