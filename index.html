@@ -19,6 +19,15 @@
     <div class="bg-overlay"></div>
     <canvas id="matrix-bg"></canvas>
 
+    <canvas id="matrix-bg"></canvas>
+
+    <!-- Video Overlay -->
+    <div id="video-overlay">
+        <video id="intro-video" muted playsinline>
+            <source src="videos/ANIMASI UNtuk IRF.mp4" type="video/mp4">
+        </video>
+    </div>
+
 
     <!-- Header & Navigation -->
     <header>
@@ -52,6 +61,7 @@
         <!-- Scene 1: Hero -->
         <section class="scene" id="scene-hero">
             <div class="content">
+                <p class="hero-tagline fade-up" data-key="hero-tagline">INTELLIGENT RECORDING SYSTEM</p>
                 <h1 class="fade-up" data-key="hero-title">CATAT TEMUAN <br> HARI INI
                 </h1>
                 <div class="hero-actions fade-up">
@@ -75,6 +85,30 @@
                     <span data-key="scroll-down">SCROLL DOWN</span>
                 </div>
             </div>
+            </div>
+        </section>
+
+        <!-- Scene: Features (New) -->
+        <section class="scene" id="scene-features">
+            <div class="content">
+                <h2 class="fade-up">KEY FEATURES</h2>
+                <div class="features-grid fade-up">
+                    <div class="feature-card glass">
+                        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                        <h3>Fast Reporting</h3>
+                        <p>Catat temuan PIHPS dengan cepat dan akurat dalam hitungan detik.</p>
+                    </div>
+                    <div class="feature-card glass">
+                        <div class="feature-icon"><i class="fas fa-sync-alt"></i></div>
+                        <h3>Real-time Sync</h3>
+                        <p>Data tersimpan otomatis dan siap diekspor kapan saja.</p>
+                    </div>
+                    <div class="feature-card glass">
+                        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                        <h3>Secure Data</h3>
+                        <p>Keamanan data terjamin dengan sistem pencatatan cerdas.</p>
+                    </div>
+                </div>
             </div>
         </section>
 

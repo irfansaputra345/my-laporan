@@ -39,7 +39,7 @@ body {
     z-index: -5;
     background: url('images/modern_bg.png') no-repeat center center;
     background-size: cover;
-    filter: brightness(0.6) saturate(1.2);
+    filter: brightness(0.85) saturate(1.1);
     animation: bgFloat 30s infinite ease-in-out;
     pointer-events: none;
 }
@@ -69,7 +69,7 @@ body {
     z-index: -4;
     background: radial-gradient(circle at 20% 30%, rgba(218, 41, 28, 0.15) 0%, transparent 50%),
         radial-gradient(circle at 80% 70%, rgba(251, 225, 34, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.8) 100%);
+        radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.6) 100%);
     pointer-events: none;
     background-size: 150% 150%;
     animation: meshMove 20s infinite alternate ease-in-out;
@@ -111,6 +111,37 @@ body {
     }
 }
 
+#video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    z-index: 10000;
+    /* Highest priority */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease;
+}
+
+#video-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+#video-overlay video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Cover the screen */
+}
+
+/* Removed Taunt Animation Styles */
+
 header {
     position: fixed;
     top: 0;
@@ -139,6 +170,34 @@ header {
     display: inline-block;
     transition: all 0.3s ease;
     backdrop-filter: blur(5px);
+    animation: textFlicker 3s infinite alternate;
+}
+
+@keyframes textFlicker {
+
+    0%,
+    19%,
+    21%,
+    23%,
+    25%,
+    54%,
+    56%,
+    100% {
+        opacity: 1;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    20%,
+    24%,
+    55% {
+        opacity: 0.5;
+        text-shadow: none;
+    }
+
+    22% {
+        opacity: 0.1;
+        text-shadow: none;
+    }
 }
 
 .logo:hover {
@@ -189,51 +248,127 @@ header {
     transition: 0.3s;
 }
 
+/* Sidebar Navigation */
 #fullscreen-nav {
     position: fixed;
     top: 0;
-    left: 0;
-    width: 100%;
+    right: 0;
+    left: auto;
+    /* Override left: 0 */
+    width: 400px;
     height: 100%;
-    background-color: rgba(50, 13, 127, 0.95);
+    background: rgba(10, 5, 20, 0.6);
+    /* Glassmorphism Base */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 90;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.5s ease;
+    transform: translateX(100%);
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    visibility: visible;
+    /* Always visible for transform to work */
+    opacity: 1;
 }
 
 #fullscreen-nav.active {
-    opacity: 1;
-    visibility: visible;
+    transform: translateX(0);
 }
 
 #fullscreen-nav ul {
     list-style: none;
-    text-align: center;
+    text-align: left;
+    /* Align text to left for sidebar */
+    width: 100%;
+    padding: 0 3rem;
 }
 
 #fullscreen-nav li {
-    margin: 2rem 0;
+    margin: 1.5rem 0;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.5s ease;
+}
+
+#fullscreen-nav.active li {
+    opacity: 1;
+    transform: translateX(0);
+    transition-delay: 0.2s;
+    /* Stagger effect handled in JS or via delay */
+}
+
+/* Stagger delays handled in CSS for simplicity if consistent count */
+#fullscreen-nav.active li:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+#fullscreen-nav.active li:nth-child(2) {
+    transition-delay: 0.15s;
+}
+
+#fullscreen-nav.active li:nth-child(3) {
+    transition-delay: 0.2s;
+}
+
+#fullscreen-nav.active li:nth-child(4) {
+    transition-delay: 0.25s;
+}
+
+#fullscreen-nav.active li:nth-child(5) {
+    transition-delay: 0.3s;
+}
+
+#fullscreen-nav.active li:nth-child(6) {
+    transition-delay: 0.35s;
+}
+
+#fullscreen-nav.active li:nth-child(7) {
+    transition-delay: 0.4s;
 }
 
 #fullscreen-nav a {
-    color: #fff;
+    color: rgba(255, 255, 255, 0.6);
     text-decoration: none;
     font-family: var(--font-heading);
-    font-size: 4rem;
-    font-weight: 900;
-    letter-spacing: -1px;
-    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    font-size: 2rem;
+    /* Smaller than fullscreen */
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
     display: inline-block;
+    position: relative;
 }
 
 #fullscreen-nav a:hover {
-    color: var(--accent-color);
-    letter-spacing: 8px;
-    transform: scale(1.05);
+    color: #fff;
+    transform: translateX(10px);
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+#fullscreen-nav a::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -20px;
+    width: 0;
+    height: 2px;
+    background: var(--accent-color);
+    transition: width 0.3s ease;
+    transform: translateY(-50%);
+}
+
+#fullscreen-nav a:hover::before {
+    width: 15px;
+}
+
+/* Mobile Sidebar */
+@media (max-width: 768px) {
+    #fullscreen-nav {
+        width: 100%;
+    }
 }
 
 main {
@@ -282,6 +417,17 @@ h2 {
     background-clip: text;
     -webkit-text-fill-color: transparent;
     padding: 0.1rem 0;
+}
+
+.hero-tagline {
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    letter-spacing: 4px;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    opacity: 0.9;
 }
 
 p {
