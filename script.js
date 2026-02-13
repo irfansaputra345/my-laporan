@@ -250,10 +250,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // GSAP transition for language switch
         gsap.to('body', {
             opacity: 0,
-            duration: 0.3,
+            duration: 0.2,
             onComplete: () => {
                 updateLanguage();
-                gsap.to('body', { opacity: 1, duration: 0.3 });
+                gsap.to('body', { opacity: 1, duration: 0.2 });
             }
         });
     });
@@ -270,8 +270,8 @@ document.addEventListener('DOMContentLoaded', () => {
     gsap.to(scenes[0].querySelectorAll('.fade-up'), {
         y: 0,
         opacity: 1,
-        duration: 1,
-        stagger: 0.2,
+        duration: 0.65,
+        stagger: 0.15,
         ease: 'power3.out'
     });
 
@@ -294,17 +294,17 @@ document.addEventListener('DOMContentLoaded', () => {
         tl.to(prevScene.querySelectorAll('.fade-up'), {
             y: -50,
             opacity: 0,
-            duration: 0.8,
-            stagger: 0.1,
+            duration: 0.5,
+            stagger: 0.07,
             ease: 'power3.in'
         })
-            .to(prevScene, { autoAlpha: 0, duration: 0.5 }, "-=0.2")
+            .to(prevScene, { autoAlpha: 0, duration: 0.35 }, "-=0.2")
 
             // Incoming Scene
             .set(nextScene, { autoAlpha: 1 })
             .fromTo(nextScene.querySelectorAll('.fade-up'),
                 { y: 50, opacity: 0 },
-                { y: 0, opacity: 1, duration: 1, stagger: 0.2, ease: 'power3.out' },
+                { y: 0, opacity: 1, duration: 0.65, stagger: 0.15, ease: 'power3.out' },
                 "-=0.3"
             );
     }
@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nav.classList.contains('active')) {
             gsap.fromTo(menuLinks,
                 { x: 30, opacity: 0 }, // Changed y to x for sidebar slide-in effect
-                { x: 0, opacity: 1, duration: 0.5, stagger: 0.1, delay: 0.3 }
+                { x: 0, opacity: 1, duration: 0.35, stagger: 0.07, delay: 0.2 }
             );
         }
     });
@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gsap.to(modernBg, {
             x: x,
             y: y,
-            duration: 1,
+            duration: 0.65,
             ease: 'power1.out'
         });
     });
@@ -406,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
             background: `radial-gradient(circle at 20% 30%, ${theme.accent} 0%, transparent 50%),
                          radial-gradient(circle at 80% 70%, ${theme.gold} 0%, transparent 50%),
                          radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.8) 100%)`,
-            duration: 1.5,
+            duration: 1,
             ease: 'power2.inOut'
         });
     }

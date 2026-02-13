@@ -191,7 +191,7 @@ header {
     z-index: 90;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.35s ease;
 }
 
 #fullscreen-nav.active {
@@ -402,7 +402,7 @@ p {
     margin: auto;
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
     transform: scale(0.95);
-    transition: 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
     max-height: calc(100vh - 80px);
     overflow-y: auto;
 }

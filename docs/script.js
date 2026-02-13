@@ -128,10 +128,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // GSAP transition for language switch
         gsap.to('body', {
             opacity: 0,
-            duration: 0.3,
+            duration: 0.2,
             onComplete: () => {
                 updateLanguage();
-                gsap.to('body', { opacity: 1, duration: 0.3 });
+                gsap.to('body', { opacity: 1, duration: 0.2 });
             }
         });
     });
@@ -148,8 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
     gsap.to(scenes[0].querySelectorAll('.fade-up'), {
         y: 0,
         opacity: 1,
-        duration: 1,
-        stagger: 0.2,
+        duration: 0.65,
+        stagger: 0.15,
         ease: 'power3.out'
     });
 
@@ -172,17 +172,17 @@ document.addEventListener('DOMContentLoaded', () => {
         tl.to(prevScene.querySelectorAll('.fade-up'), {
             y: -50,
             opacity: 0,
-            duration: 0.8,
-            stagger: 0.1,
+            duration: 0.5,
+            stagger: 0.07,
             ease: 'power3.in'
         })
-            .to(prevScene, { autoAlpha: 0, duration: 0.5 }, "-=0.2")
+            .to(prevScene, { autoAlpha: 0, duration: 0.35 }, "-=0.2")
 
             // Incoming Scene
             .set(nextScene, { autoAlpha: 1 })
             .fromTo(nextScene.querySelectorAll('.fade-up'),
                 { y: 50, opacity: 0 },
-                { y: 0, opacity: 1, duration: 1, stagger: 0.2, ease: 'power3.out' },
+                { y: 0, opacity: 1, duration: 0.65, stagger: 0.15, ease: 'power3.out' },
                 "-=0.3"
             );
     }
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nav.classList.contains('active')) {
             gsap.fromTo(menuLinks,
                 { y: 30, opacity: 0 },
-                { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, delay: 0.3 }
+                { y: 0, opacity: 1, duration: 0.35, stagger: 0.07, delay: 0.2 }
             );
         }
     });
@@ -277,8 +277,8 @@ document.addEventListener('DOMContentLoaded', () => {
             inactiveVideo.load();
             inactiveVideo.play().then(() => {
                 // Crossfade
-                gsap.to(inactiveVideo, { opacity: 0.8, duration: 1 });
-                gsap.to(activeVideo, { opacity: 0, duration: 1 });
+                gsap.to(inactiveVideo, { opacity: 0.8, duration: 0.65 });
+                gsap.to(activeVideo, { opacity: 0, duration: 0.65 });
 
                 // Swap active content
                 const temp = activeVideo;
@@ -777,11 +777,11 @@ document.addEventListener('DOMContentLoaded', () => {
     interactiveElements.forEach(el => {
         el.addEventListener('mouseenter', () => {
             document.body.classList.add('cursor-hover');
-            gsap.to(cursor, { scale: 1.5, duration: 0.3 });
+            gsap.to(cursor, { scale: 1.5, duration: 0.2 });
         });
         el.addEventListener('mouseleave', () => {
             document.body.classList.remove('cursor-hover');
-            gsap.to(cursor, { scale: 1, duration: 0.3 });
+            gsap.to(cursor, { scale: 1, duration: 0.2 });
         });
     });
 
@@ -796,7 +796,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gsap.to(btn, {
                 x: x * 0.4,
                 y: y * 0.4,
-                duration: 0.3,
+                duration: 0.2,
                 ease: "power2.out"
             });
         });
@@ -805,7 +805,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gsap.to(btn, {
                 x: 0,
                 y: 0,
-                duration: 0.5,
+                duration: 0.35,
                 ease: "elastic.out(1, 0.3)"
             });
         });
@@ -822,7 +822,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 gsap.to(h, {
                     x: xPercent * 30,
                     y: yPercent * 30,
-                    duration: 1,
+                    duration: 0.65,
                     ease: "power2.out"
                 });
             });
