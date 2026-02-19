@@ -796,14 +796,17 @@ p {
 }
 
 .report-card {
-    background: rgba(255, 255, 255, 0.98);
-    border-radius: 20px;
-    padding: 1.8rem;
-    color: #1a1a1a;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 24px;
+    padding: 2rem;
+    color: #ffffff;
     text-align: left;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-top: 6px solid var(--accent-color);
     display: flex;
     flex-direction: column;
@@ -814,9 +817,9 @@ p {
 }
 
 .report-card .report-header {
-    border-bottom: 1px solid #eee;
-    padding-bottom: 0.8rem;
-    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 1rem;
+    margin-bottom: 1.2rem;
 }
 
 .report-card .report-title {
@@ -830,7 +833,7 @@ p {
 
 .report-card .report-date {
     font-size: 0.8rem;
-    color: #666;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .report-items-list {
@@ -842,7 +845,7 @@ p {
     line-height: 1.4;
     margin-bottom: 1.2rem;
     padding-bottom: 0.8rem;
-    border-bottom: 1px dotted #eee;
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.1);
 }
 
 .report-card .report-item:last-child {
@@ -851,7 +854,7 @@ p {
 }
 
 .report-card .report-item strong {
-    color: #333;
+    color: #fff;
 }
 
 .report-card .report-cause {
@@ -866,11 +869,11 @@ p {
 
 .report-card .report-notes {
     font-size: 0.85rem;
-    color: #444;
+    color: rgba(255, 255, 255, 0.8);
     font-style: italic;
-    border-top: 1px dashed #ddd;
-    padding-top: 0.8rem;
-    max-height: 80px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.2);
+    padding-top: 1rem;
+    max-height: 100px;
     overflow-y: auto;
 }
 
