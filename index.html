@@ -68,8 +68,9 @@
     <nav id="fullscreen-nav">
         <ul>
             <li><a href="#" class="nav-link" data-index="0" data-key="nav-home">HOME</a></li>
-            <li><a href="#" class="nav-link" data-index="1" data-key="nav-concept">CONCEPT</a></li>
-            <li><a href="#" class="nav-link" data-index="2" data-key="nav-exp">EXPERIENCE</a></li>
+            <li><a href="#" class="nav-link" data-index="1" data-key="nav-features">FEATURES</a></li>
+            <li><a href="#" class="nav-link" data-index="2" data-key="nav-concept">CONCEPT</a></li>
+            <li><a href="#" class="nav-link" data-index="3" data-key="nav-exp">EXPERIENCE</a></li>
             <li><a href="#" class="nav-link" id="nav-note-trigger" data-key="nav-notes">PIHPS REPORTS</a></li>
             <li><a href="#" class="nav-link" id="nav-sop-trigger" data-key="nav-sop-notes">SOP PRICE CHANGE</a></li>
             <li><a href="#" class="nav-link" id="nav-sph-trigger" data-key="nav-sph-notes">SPH REPORTS</a></li>
@@ -134,22 +135,34 @@
         <!-- Scene: Features (New) -->
         <section class="scene" id="scene-features">
             <div class="content">
-                <h2 class="fade-up">KEY FEATURES</h2>
+                <h2 class="fade-up" data-key="features-title">KEY FEATURES</h2>
                 <div class="features-grid fade-up">
+                    <!-- Feature 1 -->
                     <div class="feature-card glass">
-                        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
-                        <h3>Fast Reporting</h3>
-                        <p>Catat temuan PIHPS dengan cepat dan akurat dalam hitungan detik.</p>
+                        <div class="hero-glow" style="width: 200px; height: 200px; opacity: 0.2;"></div>
+                        <div class="feature-icon"><i class="fas fa-microchip"></i></div>
+                        <h3>Smart Analysis</h3>
+                        <p data-key="feature-1-desc">Sistem cerdas yang membantu menganalisis harga pasar secara
+                            real-time dan akurat.</p>
                     </div>
+                    <!-- Feature 2 -->
                     <div class="feature-card glass">
-                        <div class="feature-icon"><i class="fas fa-sync-alt"></i></div>
-                        <h3>Real-time Sync</h3>
-                        <p>Data tersimpan otomatis dan siap diekspor kapan saja.</p>
+                        <div class="hero-glow"
+                            style="width: 200px; height: 200px; opacity: 0.2; background: radial-gradient(circle, rgba(251, 225, 34, 0.15) 0%, transparent 70%);">
+                        </div>
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #fbe122, #d4af37);"><i
+                                class="fas fa-file-export"></i></div>
+                        <h3>Multi-Format Export</h3>
+                        <p data-key="feature-2-desc">Ekspor laporan temuan Anda langsung ke format PDF, Word, atau kirim
+                            via WhatsApp.</p>
                     </div>
+                    <!-- Feature 3 -->
                     <div class="feature-card glass">
-                        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-                        <h3>Secure Data</h3>
-                        <p>Keamanan data terjamin dengan sistem pencatatan cerdas.</p>
+                        <div class="hero-glow" style="width: 200px; height: 200px; opacity: 0.2;"></div>
+                        <div class="feature-icon"><i class="fas fa-fingerprint"></i></div>
+                        <h3>Cloud Storage</h3>
+                        <p data-key="feature-3-desc">Data tersimpan aman di sistem awan, memungkinkan akses laporan dari
+                            perangkat mana saja.</p>
                     </div>
                 </div>
             </div>
@@ -437,6 +450,22 @@
                 </button>
             </div>
         </div>
+    </div>
+
+    <!-- Persistent Helper Robot -->
+    <div id="assistant-robot" class="robot-character mini">
+        <div class="robot-dialogue glass">
+            <div class="dialogue-inner">
+                <p class="robot-message" data-key="robot-greet">Halo! Ada yang bisa saya bantu?</p>
+                <input type="text" id="robot-input" placeholder="Tanya sesuatu..." class="glass">
+            </div>
+            <div class="dialogue-arrow"></div>
+        </div>
+        <div class="robot-head">
+            <div class="robot-eye left"></div>
+            <div class="robot-eye right"></div>
+        </div>
+        <div class="robot-body"></div>
     </div>
 
     <!-- GSAP Scripts -->

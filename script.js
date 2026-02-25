@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const preloader = document.getElementById('preloader-overlay');
     const introRobot = document.getElementById('intro-robot');
     const loadingBar = document.querySelector('.loading-bar');
+    const assistantRobot = document.getElementById('assistant-robot');
+    let dizzyTimeout;
+    let shakeTimeout;
 
     if (preloader && introRobot) {
         // Start running
@@ -134,10 +137,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const translations = {
         'en': {
             'nav-home': 'HOME',
+            'nav-features': 'FEATURES',
             'nav-concept': 'CONCEPT',
             'nav-exp': 'EXPERIENCE',
             'nav-notes': 'MY NOTES',
+            'features-title': 'KEY FEATURES',
+            'feature-1-desc': 'Intelligent system that helps analyze market prices accurately in real-time.',
+            'feature-2-desc': 'Export your findings directly to PDF, Word, or send via WhatsApp.',
+            'feature-3-desc': 'Data is securely stored in the cloud, allowing report access from any device.',
             'nav-contact': 'CONTACT',
+            'robot-greet': 'Hello! I am <strong>IRBOT</strong>. How can I help you today?',
+            'robot-thanks': 'Thanks for the message! I am <strong>IRBOT</strong>, and I will help you recording everything.',
+            'robot-shake': 'Whoa! Stop shaking! <strong>IRBOT</strong> is so dizzy...',
+            'robot-idle': 'Are you still there? Do not forget to save your note!',
+            'robot-typing': 'Great! <strong>IRBOT</strong> is ready to help you record this finding!',
             'hero-title': 'NOTE TODAY\'S <br> FINDINGS',
             'scroll-down': 'SCROLL DOWN',
             'concept-title': 'INTELLIGENT <br> RECORDING<br> INSTRUMENTS',
@@ -196,11 +209,20 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         'id': {
             'nav-home': 'BERANDA',
+            'nav-features': 'FITUR',
             'nav-concept': 'KONSEP',
             'nav-exp': 'PENGALAMAN',
             'nav-notes': 'LAPORAN PIHPS',
-            'nav-gen-notes': 'CATATAN UMUM',
+            'features-title': 'FITUR UTAMA',
+            'feature-1-desc': 'Sistem cerdas yang membantu menganalisis harga pasar secara real-time dan akurat.',
+            'feature-2-desc': 'Ekspor laporan temuan Anda langsung ke format PDF, Word, atau kirim via WhatsApp.',
+            'feature-3-desc': 'Data tersimpan aman di sistem awan, memungkinkan akses laporan dari perangkat mana saja.',
             'nav-contact': 'KONTAK',
+            'robot-greet': 'Halo! Saya <strong>IRBOT</strong>. Ada yang bisa saya bantu hari ini?',
+            'robot-thanks': 'Terima kasih pesannya! Saya <strong>IRBOT</strong>, dan saya akan bantu mencatat semuanya.',
+            'robot-shake': 'Waduh! Jangan digoyang-goyang! <strong>IRBOT</strong> pusing...',
+            'robot-idle': 'Halo? Masih di sana? Jangan lupa simpan catatannya ya!',
+            'robot-typing': 'Mantap! <strong>IRBOT</strong> siap membantu mencatat temuan ini!',
             'hero-title': 'CATAT TEMUAN <br> HARI INI',
             'scroll-down': 'GULIR KE BAWAH',
             'concept-title': 'INSTRUMEN <br> PENCATATAN <br> CERDAS',
@@ -1661,7 +1683,218 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Language Initial State ---
+    // --- Dizzy Robot Logic ---
+
+    // 0. Dragging Logic
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    assistantRobot.addEventListener('mousedown', startDrag);
+    assistantRobot.addEventListener('touchstart', startDrag, { passive: false });
+
+    function startDrag(e) {
+        isDragging = true;
+        assistantRobot.style.transition = 'none';
+        const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+        const rect = assistantRobot.getBoundingClientRect();
+        offsetX = clientX - rect.left;
+        offsetY = clientY - rect.top;
+
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('touchmove', drag, { passive: false });
+        document.addEventListener('mouseup', endDrag);
+        document.addEventListener('touchend', endDrag);
+    }
+
+    function drag(e) {
+        if (!isDragging) return;
+        const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+        assistantRobot.style.left = (clientX - offsetX) + 'px';
+        assistantRobot.style.top = (clientY - offsetY) + 'px';
+        assistantRobot.style.bottom = 'auto';
+        assistantRobot.style.right = 'auto';
+
+        if (e.cancelable) e.preventDefault();
+    }
+
+    function endDrag() {
+        isDragging = false;
+        document.removeEventListener('mousemove', drag);
+        document.removeEventListener('touchmove', drag);
+        assistantRobot.style.transition = 'opacity 0.5s ease';
+    }
+
+    // 0.1 Click Interaction
+    assistantRobot.addEventListener('click', (e) => {
+        if (isDragging) return;
+
+        // Prevent closing when clicking the input
+        if (e.target.id === 'robot-input') return;
+
+        assistantRobot.classList.toggle('dialogue-active');
+
+        if (assistantRobot.classList.contains('dialogue-active')) {
+            // Jump and Spin animation
+            gsap.timeline()
+                .to(assistantRobot, { y: -30, scale: 1.1, duration: 0.3, ease: "power2.out" })
+                .to(assistantRobot, {
+                    rotationY: 360,
+                    duration: 0.5,
+                    ease: "power1.inOut"
+                }, "-=0.1")
+                .to(assistantRobot, {
+                    y: 0,
+                    scale: 1,
+                    duration: 0.4,
+                    ease: "bounce.out",
+                    onComplete: () => {
+                        assistantRobot.style.rotationY = 0;
+                    }
+                });
+        }
+    });
+
+    // 0.2 Dialogue Input Handling
+    const robotInput = document.getElementById('robot-input');
+    const robotMsg = document.querySelector('.robot-message');
+
+    if (robotInput) {
+        robotInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && robotInput.value.trim() !== '') {
+                const userVal = robotInput.value;
+                robotInput.value = '';
+
+                // Interaction: Robot jumps after receiving message
+                gsap.to(assistantRobot, { y: -15, yoyo: true, repeat: 1, duration: 0.2 });
+
+                // Show "Response"
+                robotMsg.innerHTML = translations[currentLang]['robot-thanks'];
+
+                // Revert back after a few seconds
+                setTimeout(() => {
+                    robotMsg.innerHTML = translations[currentLang]['robot-greet'];
+                }, 4000);
+            }
+        });
+    }
+
+    function triggerDizzy() {
+        if (!assistantRobot) return;
+        assistantRobot.classList.add('dizzy');
+
+        // Update message if dialogue is active
+        if (assistantRobot.classList.contains('active')) {
+            robotMsg.innerHTML = translations[currentLang]['robot-shake'];
+        }
+
+        clearTimeout(dizzyTimeout);
+        dizzyTimeout = setTimeout(() => {
+            assistantRobot.classList.remove('dizzy');
+            // Revert message
+            if (document.querySelector('.modal.active')) {
+                robotMsg.innerHTML = translations[currentLang]['robot-idle'];
+            } else {
+                robotMsg.innerHTML = translations[currentLang]['robot-greet'];
+            }
+        }, 3000);
+    }
+
+    // 1. Shake Detection
+    let lastX, lastY, lastZ;
+    let moveThreshold = 25;
+
+    window.addEventListener('devicemotion', (event) => {
+        const acceleration = event.accelerationIncludingGravity;
+        if (!acceleration) return;
+
+        const curX = acceleration.x;
+        const curY = acceleration.y;
+        const curZ = acceleration.z;
+
+        if (lastX !== undefined) {
+            const deltaX = Math.abs(curX - lastX);
+            const deltaY = Math.abs(curY - lastY);
+            const deltaZ = Math.abs(curZ - lastZ);
+
+            if ((deltaX > moveThreshold && deltaY > moveThreshold) || (deltaX > moveThreshold && deltaZ > moveThreshold) || (deltaY > moveThreshold && deltaZ > moveThreshold)) {
+                assistantRobot.classList.add('active');
+                triggerDizzy();
+                clearTimeout(shakeTimeout);
+                shakeTimeout = setTimeout(() => {
+                    if (!document.querySelector('.modal.active')) {
+                        assistantRobot.classList.remove('active');
+                    }
+                }, 5000);
+            }
+        }
+
+        lastX = curX;
+        lastY = curY;
+        lastZ = curZ;
+    });
+
+    // 2. Idle Detection in Modals
+    let idleTimer;
+    const idleLimit = 5000; // 5 seconds
+
+    function resetIdleTimer(e) {
+        if (assistantRobot.classList.contains('dizzy')) {
+            assistantRobot.classList.remove('dizzy');
+        }
+
+        // Proactive Greeting when typing
+        if (e && (e.type === 'input' || e.type === 'focus')) {
+            if (!assistantRobot.classList.contains('dialogue-active')) {
+                assistantRobot.classList.add('dialogue-active');
+            }
+            robotMsg.innerHTML = translations[currentLang]['robot-typing'];
+
+            // Jump with excitement
+            gsap.to(assistantRobot, { y: -10, yoyo: true, repeat: 1, duration: 0.15 });
+        }
+
+        clearTimeout(idleTimer);
+        if (document.querySelector('.modal.active')) {
+            idleTimer = setTimeout(() => {
+                triggerDizzy();
+            }, idleLimit);
+        }
+    }
+
+    // Watch for interactions in modals
+    const modalInputs = document.querySelectorAll('.modal input, .modal textarea, .modal select');
+    modalInputs.forEach(input => {
+        input.addEventListener('input', resetIdleTimer);
+        input.addEventListener('focus', resetIdleTimer);
+        input.addEventListener('click', resetIdleTimer);
+        input.addEventListener('keydown', resetIdleTimer);
+    });
+
+    // Show robot when modal opens
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'class') {
+                const target = mutation.target;
+                if (target.classList.contains('modal') && target.classList.contains('active')) {
+                    assistantRobot.classList.add('active');
+                    resetIdleTimer();
+                } else if (target.classList.contains('modal') && !document.querySelector('.modal.active')) {
+                    assistantRobot.classList.remove('active');
+                    assistantRobot.classList.remove('dizzy');
+                    clearTimeout(idleTimer);
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll('.modal').forEach(modal => {
+        observer.observe(modal, { attributes: true });
+    });
+
+    // Initial State
     updateLanguage();
 
     // --- Magnetic Buttons ---
