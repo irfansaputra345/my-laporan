@@ -37,9 +37,9 @@ body {
     width: 110%;
     height: 110%;
     z-index: -5;
-    background: url('images/modern_bg.png') no-repeat center center;
+    background: url('images/anime_hd_bg.png') no-repeat center center;
     background-size: cover;
-    filter: brightness(1.1) saturate(1.1);
+    filter: brightness(0.8) saturate(1.2);
     animation: bgFloat 30s infinite ease-in-out;
     pointer-events: none;
 }
