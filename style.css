@@ -42,6 +42,7 @@ body {
     filter: brightness(0.8) saturate(1.2);
     animation: bgFloat 30s infinite ease-in-out;
     pointer-events: none;
+    transition: background-image 1.2s ease-in-out, filter 1.2s ease-in-out;
 }
 
 @keyframes bgFloat {

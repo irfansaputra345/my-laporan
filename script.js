@@ -5,12 +5,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let isAnimating = false;
     let autoSaveTimeout;
 
+    const bgImages = [
+        'images/anime_hd_bg.png',
+        'images/anime_bg_2.png',
+        'images/anime_bg_3.png',
+        'images/anime_bg_4.png'
+    ];
+
     const noteBtn = document.getElementById('note-btn');
     const noteModal = document.getElementById('note-modal');
     const closeNote = document.getElementById('close-note');
     const noteArea = document.getElementById('note-area');
     const reportDateInput = document.getElementById('report-date');
     const marketInput = document.getElementById('market-name');
+    const modernBg = document.getElementById('modern-bg');
+    const bgOverlay = document.querySelector('.bg-overlay');
     const findingRowsContainer = document.getElementById('finding-rows-container');
     const addFindingBtn = document.getElementById('add-finding-btn');
     const saveNoteBtn = document.getElementById('save-note');
@@ -307,6 +316,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 { y: 0, opacity: 1, duration: 0.65, stagger: 0.15, ease: 'power3.out' },
                 "-=0.3"
             );
+
+        // Update Background Image
+        if (modernBg) {
+            modernBg.style.backgroundImage = `url('${bgImages[index % bgImages.length]}')`;
+        }
     }
 
     // --- Scroll Handling ---
@@ -373,8 +387,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Background Modern Display ---
-    const modernBg = document.getElementById('modern-bg');
-    const bgOverlay = document.querySelector('.bg-overlay');
 
     // Subtle parallax effect on mouse move
     window.addEventListener('mousemove', (e) => {
