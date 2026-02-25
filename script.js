@@ -5,6 +5,43 @@ document.addEventListener('DOMContentLoaded', () => {
     let isAnimating = false;
     let autoSaveTimeout;
 
+    // --- Intro Animation ---
+    const preloader = document.getElementById('preloader-overlay');
+    const introRobot = document.getElementById('intro-robot');
+    const loadingBar = document.querySelector('.loading-bar');
+
+    if (preloader && introRobot) {
+        // Start running
+        introRobot.classList.add('running');
+
+        const introTl = gsap.timeline({
+            onComplete: () => {
+                gsap.to(preloader, {
+                    opacity: 0,
+                    duration: 0.8,
+                    delay: 0.5,
+                    ease: 'power2.inOut',
+                    onComplete: () => {
+                        preloader.remove();
+                        introRobot.classList.remove('running');
+                    }
+                });
+            }
+        });
+
+        introTl
+            .to(introRobot, {
+                x: '300vw',
+                duration: 3.5,
+                ease: 'none',
+            })
+            .to(loadingBar, {
+                width: '100%',
+                duration: 3,
+                ease: 'power1.inOut'
+            }, 0);
+    }
+
     const bgImages = [
         'images/anime_hd_bg.png',
         'images/anime_bg_2.png',

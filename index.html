@@ -15,6 +15,27 @@
 </head>
 
 <body>
+    <!-- Preloader Intro -->
+    <div id="preloader-overlay">
+        <div class="preloader-content">
+            <div id="intro-robot" class="robot-character">
+                <div class="robot-head">
+                    <div class="robot-eye left"></div>
+                    <div class="robot-eye right"></div>
+                </div>
+                <div class="robot-body"></div>
+                <div class="robot-legs">
+                    <div class="leg leg-left"></div>
+                    <div class="leg leg-right"></div>
+                </div>
+            </div>
+            <div class="loading-bar-container">
+                <div class="loading-bar"></div>
+            </div>
+            <p class="loading-text">INITIALIZING SYSTEM...</p>
+        </div>
+    </div>
+
     <div id="modern-bg"></div>
     <div class="bg-overlay"></div>
     <canvas id="matrix-bg"></canvas>
@@ -61,6 +82,10 @@
     <main id="main-container">
         <!-- Scene 1: Hero -->
         <section class="scene" id="scene-hero">
+            <div class="hero-glow"></div>
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+            <div class="floating-shape shape-3"></div>
             <div class="content">
                 <p class="hero-tagline fade-up" data-key="hero-tagline">INTELLIGENT RECORDING SYSTEM</p>
                 <h1 class="fade-up" data-key="hero-title">CATAT TEMUAN <br> HARI INI
