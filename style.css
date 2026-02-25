@@ -710,20 +710,21 @@ p {
 }
 
 .modal-content.glass {
-    background: rgba(15, 15, 15, 0.88);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(25px) saturate(180%);
     -webkit-backdrop-filter: blur(25px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 28px;
     padding: 3rem;
     width: 90%;
     max-width: 700px;
     margin: auto;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
     transform: scale(0.95);
     transition: 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
     max-height: calc(100vh - 80px);
     overflow-y: auto;
+    color: #1a1a1a;
 }
 
 .modal.active .modal-content.glass {
@@ -745,9 +746,9 @@ p {
 
 .btn-clear {
     position: relative;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.7);
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.6);
     width: 38px;
     height: 38px;
     border-radius: 10px;
@@ -759,8 +760,9 @@ p {
 }
 
 .btn-clear:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
+    background: rgba(218, 41, 28, 0.1);
+    color: var(--accent-color);
+    border-color: var(--accent-color);
     transform: translateY(-2px);
 }
 
@@ -822,7 +824,7 @@ p {
 .close-modal {
     background: none;
     border: none;
-    color: #fff;
+    color: #1a1a1a;
     font-size: 2rem;
     cursor: pointer;
     line-height: 1;
@@ -834,11 +836,11 @@ p {
     grid-template-columns: 1fr 1fr auto;
     gap: 1.2rem;
     align-items: flex-end;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(0, 0, 0, 0.03);
     padding: 1.2rem;
     border-radius: 16px;
     margin-bottom: 1.2rem;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
     position: relative;
     transition: all 0.3s ease;
 }
@@ -874,7 +876,7 @@ p {
 .form-section {
     margin-bottom: 1.8rem;
     padding-bottom: 1.2rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .form-section:last-of-type {
@@ -974,21 +976,23 @@ p {
     width: 100%;
     min-height: 120px;
     max-height: 250px;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 12px;
-    color: #fff;
+    color: #1a1a1a;
     padding: 1rem;
     font-family: var(--font-body);
     font-size: 0.95rem;
     resize: none;
     transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 #note-area:focus,
 #gen-note-area:focus {
     outline: none;
     border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(218, 41, 28, 0.15);
 }
 
 .modal-actions-list {
@@ -1023,36 +1027,95 @@ p {
 .btn-primary {
     background: var(--accent-color);
     color: #fff;
-}
-
-.btn-secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 10px rgba(218, 41, 28, 0.2);
 }
 
 .btn-primary:hover {
-    background: #357abd;
+    background: #b31d14;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(218, 41, 28, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(0, 0, 0, 0.05);
+    color: #1a1a1a;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Specific styling for PDF and Word buttons */
+#download-note,
+#download-sop,
+#download-sph,
+#download-gen-note {
+    background: rgba(235, 50, 35, 0.1);
+    /* Light PDF Red */
+    border-color: rgba(235, 50, 35, 0.2);
+    color: #bc1c06;
+}
+
+#download-note:hover,
+#download-sop:hover,
+#download-sph:hover,
+#download-gen-note:hover {
+    background: #eb3223;
+    color: #fff;
+    border-color: #eb3223;
+}
+
+#download-note-word,
+#download-sop-word,
+#download-sph-word,
+#download-gen-note-word {
+    background: rgba(43, 87, 154, 0.1);
+    /* Light Word Blue */
+    border-color: rgba(43, 87, 154, 0.2);
+    color: #2b579a;
+}
+
+#download-note-word:hover,
+#download-sop-word:hover,
+#download-sph-word:hover,
+#download-gen-note-word:hover {
+    background: #2b579a;
+    color: #fff;
+    border-color: #2b579a;
 }
 
 .btn-whatsapp {
-    background: #25D366;
-    color: #fff;
+    background: rgba(37, 211, 102, 0.1);
+    /* Light WA Green */
+    border: 1px solid rgba(37, 211, 102, 0.2);
+    color: #075e54;
     padding: 0.8rem 1.5rem;
-    border: none;
     border-radius: 30px;
     font-family: var(--font-heading);
     font-weight: 700;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: center;
+    gap: 0.8rem;
 }
 
 .btn-whatsapp:hover {
-    background: #128C7E;
-    transform: scale(1.05);
+    background: #25D366;
+    color: #fff;
+    border-color: #25D366;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+}
+
+.btn-whatsapp i,
+.btn-secondary i,
+.btn-primary i {
+    font-size: 1.25rem;
+    margin-right: 2px;
 }
 
 /* Hero Tooltips - Positioned Below */
@@ -1091,7 +1154,7 @@ p {
 }
 
 .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
 }
 
 .note-inputs {
@@ -1109,31 +1172,38 @@ p {
 
 .input-group label {
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(0, 0, 0, 0.6);
     font-family: var(--font-heading);
+    font-weight: 600;
 }
 
 .input-group input,
 .input-group select {
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     padding: 0.6rem;
-    color: #fff;
+    color: #1a1a1a;
     font-family: var(--font-body);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .input-group select option {
-    background-color: #1a1a1a;
-    color: #fff;
+    background-color: #fff;
+    color: #1a1a1a;
 }
 
 .input-group input:focus,
 .input-group select:focus {
     outline: none;
     border-color: var(--accent-color);
-    background: rgba(255, 255, 255, 0.05);
+    background: #fff;
     box-shadow: 0 0 0 3px rgba(218, 41, 28, 0.15);
+}
+
+.input-group input::placeholder,
+textarea::placeholder {
+    color: rgba(0, 0, 0, 0.3);
 }
 
 /* Full width for cause on mobile or just make it 3 columns? Let's make it responsive. */
@@ -1160,17 +1230,17 @@ p {
 }
 
 .report-card {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border-radius: 24px;
     padding: 2rem;
-    color: #ffffff;
+    color: #1a1a1a;
     text-align: left;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
     transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-top: 6px solid var(--accent-color);
     display: flex;
     flex-direction: column;
@@ -1181,7 +1251,7 @@ p {
 }
 
 .report-card .report-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     padding-bottom: 1rem;
     margin-bottom: 1.2rem;
 }
@@ -1197,7 +1267,7 @@ p {
 
 .report-card .report-date {
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(0, 0, 0, 0.5);
 }
 
 .report-items-list {
@@ -1209,7 +1279,7 @@ p {
     line-height: 1.4;
     margin-bottom: 1.2rem;
     padding-bottom: 0.8rem;
-    border-bottom: 1px dotted rgba(255, 255, 255, 0.1);
+    border-bottom: 1px dotted rgba(0, 0, 0, 0.1);
 }
 
 .report-card .report-item:last-child {
@@ -1218,7 +1288,7 @@ p {
 }
 
 .report-card .report-item strong {
-    color: #fff;
+    color: #1a1a1a;
 }
 
 .report-card .report-cause {
@@ -1233,9 +1303,9 @@ p {
 
 .report-card .report-notes {
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(0, 0, 0, 0.7);
     font-style: italic;
-    border-top: 1px dashed rgba(255, 255, 255, 0.2);
+    border-top: 1px dashed rgba(0, 0, 0, 0.1);
     padding-top: 1rem;
     max-height: 100px;
     overflow-y: auto;
