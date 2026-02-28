@@ -28,7 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeSidebarBtn = document.getElementById('close-sidebar');
     const headerRobotBtn = document.getElementById('header-robot-btn');
     const sidebarRobotInput = document.getElementById('sidebar-robot-input');
+    const sidebarRobotSend = document.querySelector('.sidebar-input-wrapper i');
     const sidebarRobotMsg = document.querySelector('.sidebar-robot-msg');
+    const robotMsg = document.querySelector('.robot-message');
     let dizzyTimeout;
     let shakeTimeout;
 
@@ -2250,11 +2252,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 4000);
     }
 
+    function sendToBotWA(text) {
+        if (!text.trim()) return;
+        const encodedMsg = encodeURIComponent(text.trim());
+        const waUrl = `https://api.whatsapp.com/send?phone=${WA_PHONE}&text=${encodedMsg}`;
+        window.open(waUrl, '_blank');
+    }
+
     if (robotInput) {
         robotInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && robotInput.value.trim() !== '') {
-                handleRobotResponse(robotInput.value, robotMsg);
+                const val = robotInput.value.trim();
+                handleRobotResponse(val, robotMsg);
+                sendToBotWA(val);
                 robotInput.value = '';
+            }
+        });
+    }
+
+    if (sidebarRobotInput) {
+        sidebarRobotInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && sidebarRobotInput.value.trim() !== '') {
+                const val = sidebarRobotInput.value.trim();
+                handleRobotResponse(val, sidebarRobotMsg);
+                sendToBotWA(val);
+                sidebarRobotInput.value = '';
+            }
+        });
+    }
+
+    if (sidebarRobotSend) {
+        sidebarRobotSend.addEventListener('click', () => {
+            if (sidebarRobotInput.value.trim() !== '') {
+                const val = sidebarRobotInput.value.trim();
+                handleRobotResponse(val, sidebarRobotMsg);
+                sendToBotWA(val);
+                sidebarRobotInput.value = '';
             }
         });
     }
