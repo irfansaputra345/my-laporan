@@ -820,12 +820,12 @@ header {
 }
 
 body.modal-active header {
-    background: transparent;
-    border-color: transparent;
-    opacity: 0;
-    pointer-events: none;
-    transform: none;
-    /* Stay in place, just fade out */
+    display: none !important;
+}
+
+/* Fail-safe: hide header if any modal is active using :has() selector */
+body:has(.modal.active) header {
+    display: none !important;
 }
 
 .logo {

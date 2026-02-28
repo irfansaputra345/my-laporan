@@ -715,6 +715,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (noteBtn) {
         noteBtn.addEventListener('click', () => {
             noteModal.classList.add('active');
+            document.body.classList.add('modal-active');
         });
     }
 
@@ -722,6 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.open-note-modal').forEach(btn => {
         btn.addEventListener('click', () => {
             noteModal.classList.add('active');
+            document.body.classList.add('modal-active');
             setTimeout(() => { if (marketInput) marketInput.focus(); }, 100);
         });
     });
@@ -730,6 +732,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.open-gen-note-modal').forEach(btn => {
         btn.addEventListener('click', () => {
             genNoteModal.classList.add('active');
+            document.body.classList.add('modal-active');
             setTimeout(() => { if (genNoteTitle) genNoteTitle.focus(); }, 100);
         });
     });
@@ -738,6 +741,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.open-agenda-modal').forEach(btn => {
         btn.addEventListener('click', () => {
             agendaModal.classList.add('active');
+            document.body.classList.add('modal-active');
             setTimeout(() => { if (agendaTitleInput) agendaTitleInput.focus(); }, 100);
         });
     });
@@ -746,6 +750,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.open-sop-modal').forEach(btn => {
         btn.addEventListener('click', () => {
             sopModal.classList.add('active');
+            document.body.classList.add('modal-active');
             setTimeout(() => { if (sopMarketInput) sopMarketInput.focus(); }, 100);
         });
     });
@@ -755,6 +760,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             nav.classList.remove('active');
             sopModal.classList.add('active');
+            document.body.classList.add('modal-active');
             setTimeout(() => { if (sopMarketInput) sopMarketInput.focus(); }, 100);
         });
     }
@@ -762,23 +768,27 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeSop) {
         closeSop.addEventListener('click', () => {
             sopModal.classList.remove('active');
+            updateBodyModalClass();
         });
     }
 
     window.addEventListener('click', (e) => {
         if (e.target === sopModal) {
             sopModal.classList.remove('active');
+            updateBodyModalClass();
         }
     });
 
     closeNote.addEventListener('click', () => {
         noteModal.classList.remove('active');
+        updateBodyModalClass();
     });
 
     // Close on click outside
     window.addEventListener('click', (e) => {
         if (e.target === noteModal) {
             noteModal.classList.remove('active');
+            updateBodyModalClass();
         }
     });
 
@@ -787,6 +797,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             nav.classList.remove('active');
             agendaModal.classList.add('active');
+            document.body.classList.add('modal-active');
             setTimeout(() => { if (agendaTitleInput) agendaTitleInput.focus(); }, 100);
         });
     }
@@ -794,12 +805,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeAgenda) {
         closeAgenda.addEventListener('click', () => {
             agendaModal.classList.remove('active');
+            updateBodyModalClass();
         });
     }
 
     window.addEventListener('click', (e) => {
         if (e.target === agendaModal) {
             agendaModal.classList.remove('active');
+            updateBodyModalClass();
         }
     });
 
@@ -1317,21 +1330,31 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedGenTemp.content) genNoteArea.value = savedGenTemp.content;
 
         if (genNoteBtn) {
-            genNoteBtn.addEventListener('click', () => genNoteModal.classList.add('active'));
+            genNoteBtn.addEventListener('click', () => {
+                genNoteModal.classList.add('active');
+                document.body.classList.add('modal-active');
+            });
         }
-        closeGenNote.addEventListener('click', () => genNoteModal.classList.remove('active'));
+        closeGenNote.addEventListener('click', () => {
+            genNoteModal.classList.remove('active');
+            updateBodyModalClass();
+        });
 
         if (navGenNoteTrigger) {
             navGenNoteTrigger.addEventListener('click', (e) => {
                 e.preventDefault();
                 nav.classList.remove('active');
                 genNoteModal.classList.add('active');
+                document.body.classList.add('modal-active');
                 setTimeout(() => { if (genNoteTitle) genNoteTitle.focus(); }, 100);
             });
         }
 
         window.addEventListener('click', (e) => {
-            if (e.target === genNoteModal) genNoteModal.classList.remove('active');
+            if (e.target === genNoteModal) {
+                genNoteModal.classList.remove('active');
+                updateBodyModalClass();
+            }
         });
 
         saveGenNoteBtn.addEventListener('click', () => {
@@ -1713,6 +1736,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             nav.classList.remove('active');
             sphModal.classList.add('active');
+            document.body.classList.add('modal-active');
             // Set default date to today
             if (sphDateInput && !sphDateInput.value) {
                 sphDateInput.value = new Date().toISOString().split('T')[0];
@@ -1727,6 +1751,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const modal = document.getElementById('sph-modal');
             if (modal) {
                 modal.classList.add('active');
+                document.body.classList.add('modal-active');
 
                 // Set default date to today
                 const dateInput = document.getElementById('sph-date');
@@ -2324,6 +2349,16 @@ document.addEventListener('DOMContentLoaded', () => {
         input.addEventListener('keydown', resetIdleTimer);
     });
 
+    function updateBodyModalClass() {
+        if (!document.querySelector('.modal.active')) {
+            document.body.classList.remove('modal-active');
+            if (assistantRobot) assistantRobot.classList.remove('dizzy');
+            clearTimeout(idleTimer);
+        } else {
+            document.body.classList.add('modal-active');
+        }
+    }
+
     // Show robot when modal opens
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
@@ -2331,11 +2366,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const target = mutation.target;
                 if (target.classList.contains('modal') && target.classList.contains('active')) {
                     resetIdleTimer();
-                    document.body.classList.add('modal-active');
+                    updateBodyModalClass();
                 } else if (target.classList.contains('modal') && !document.querySelector('.modal.active')) {
-                    assistantRobot.classList.remove('dizzy');
-                    clearTimeout(idleTimer);
-                    document.body.classList.remove('modal-active');
+                    updateBodyModalClass();
                 }
             }
         });
