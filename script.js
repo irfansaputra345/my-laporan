@@ -942,8 +942,7 @@ document.addEventListener('DOMContentLoaded', () => {
             text += `*الْحَمْدُ لِلَّهِ جَزَا كُمُ اللَّهُ خَيْرًا*\n`;
             text += `*وَالسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ*`;
 
-            const groupLink = "https://chat.whatsapp.com/GE3iST8Ac2UDoyrXbHJDOV";
-            window.open(`${groupLink}?text=${encodeURIComponent(text)}`, '_blank');
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
         });
     }
 
