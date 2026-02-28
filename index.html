@@ -74,6 +74,8 @@
             <li><a href="#" class="nav-link" id="nav-note-trigger" data-key="nav-notes">PIHPS REPORTS</a></li>
             <li><a href="#" class="nav-link" id="nav-sop-trigger" data-key="nav-sop-notes">SOP PRICE CHANGE</a></li>
             <li><a href="#" class="nav-link" id="nav-sph-trigger" data-key="nav-sph-notes">SPH REPORTS</a></li>
+            <li><a href="#" class="nav-link" id="nav-agenda-trigger" data-key="nav-agenda-notes">AGENDA ANNOUNCEMENT</a>
+            </li>
             <li><a href="#" class="nav-link" id="nav-gen-note-trigger" data-key="nav-gen-notes">GENERAL NOTES</a></li>
             <li><a href="#" class="nav-link" data-index="3" data-key="nav-contact">CONTACT</a></li>
         </ul>
@@ -114,6 +116,14 @@
                             <i class="fas fa-list-ol"></i>
                         </button>
                         <span class="action-label" data-key="label-sph">SPH</span>
+                    </div>
+                    <div class="action-item">
+                        <button class="icon-btn hero-note-btn open-agenda-modal" title="Add Agenda Announcement"
+                            style="border-color: #2e7d32; color: #2e7d32;" data-tooltip="Agenda Announcement"
+                            data-tooltip-key="tooltip-agenda">
+                            <i class="fas fa-calendar-check"></i>
+                        </button>
+                        <span class="action-label" data-key="label-agenda">AGENDA</span>
                     </div>
                     <div class="action-item">
                         <button class="icon-btn hero-note-btn open-gen-note-modal" title="Add General Note"
@@ -392,6 +402,68 @@
                     <i class="fas fa-file-pdf"></i> PDF
                 </button>
                 <button id="download-sph-word" class="btn-secondary" data-key="btn-word">
+                    <i class="fas fa-file-word"></i> Word
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agenda Announcement Modal -->
+    <div id="agenda-modal" class="modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3 data-key="agenda-modal-title">Agenda Announcement</h3>
+                <div class="modal-header-actions">
+                    <button id="clear-agenda-note" class="btn-clear" title="Clear All" data-key="title-clear"
+                        data-tooltip="Clear all">
+                        <i class="fas fa-broom"></i>
+                    </button>
+                    <button class="close-modal" id="close-agenda">&times;</button>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h4 class="section-title"><i class="fas fa-info-circle"></i> <span data-key="title-general">Data
+                        Utama</span></h4>
+                <div class="note-inputs">
+                    <div class="input-group">
+                        <label data-key="label-gen-title">Title</label>
+                        <input type="text" id="agenda-title" placeholder="e.g., Malam 4">
+                    </div>
+                    <div class="input-group">
+                        <label data-key="label-date">Date</label>
+                        <input type="date" id="agenda-date">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h4 class="section-title"><i class="fas fa-list-ul"></i> <span data-key="title-agenda-list">Detail
+                        Agenda</span></h4>
+                <div id="agenda-rows-container">
+                    <!-- Agenda Rows will be dynamic -->
+                </div>
+                <div class="row-actions" style="gap: 1rem;">
+                    <button id="add-agenda-row-btn" class="btn-secondary">
+                        <i class="fas fa-plus"></i> <span data-key="btn-add-item">Add Item</span>
+                    </button>
+                    <button id="add-agenda-custom-row-btn" class="btn-secondary">
+                        <i class="fas fa-plus-circle"></i> <span data-key="btn-add-custom">Add Custom Item</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-actions-list">
+                <button id="save-agenda-note" class="btn-primary" data-key="btn-save">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <button id="whatsapp-agenda" class="btn-whatsapp" data-key="btn-whatsapp">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+                <button id="download-agenda" class="btn-secondary" data-key="btn-pdf">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </button>
+                <button id="download-agenda-word" class="btn-secondary" data-key="btn-word">
                     <i class="fas fa-file-word"></i> Word
                 </button>
             </div>

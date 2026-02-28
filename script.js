@@ -133,6 +133,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearSphNoteBtn = document.getElementById('clear-sph-note');
     const navSphTrigger = document.getElementById('nav-sph-trigger');
 
+    // --- Agenda Note Elements ---
+    const agendaModal = document.getElementById('agenda-modal');
+    const closeAgenda = document.getElementById('close-agenda');
+    const agendaDateInput = document.getElementById('agenda-date');
+    const agendaTitleInput = document.getElementById('agenda-title');
+    const agendaRowsContainer = document.getElementById('agenda-rows-container');
+    const addAgendaRowBtn = document.getElementById('add-agenda-row-btn');
+    const saveAgendaNoteBtn = document.getElementById('save-agenda-note');
+    const whatsappAgendaBtn = document.getElementById('whatsapp-agenda');
+    const downloadAgendaBtn = document.getElementById('download-agenda');
+    const downloadAgendaWordBtn = document.getElementById('download-agenda-word');
+    const clearAgendaNoteBtn = document.getElementById('clear-agenda-note');
+    const addAgendaCustomRowBtn = document.getElementById('add-agenda-custom-row-btn');
+    const navAgendaTrigger = document.getElementById('nav-agenda-trigger');
+
     // --- Translation Data ---
     const translations = {
         'en': {
@@ -205,7 +220,20 @@ document.addEventListener('DOMContentLoaded', () => {
             'label-pihps': 'PIHPS',
             'label-sop': 'SOP',
             'label-sph': 'SPH',
-            'label-notes': 'NOTES'
+            'label-notes': 'NOTES',
+            'nav-agenda-notes': 'AGENDA ANNOUNCEMENT',
+            'agenda-modal-title': 'Agenda Announcement',
+            'title-agenda-list': 'Agenda Details',
+            'label-agenda': 'AGENDA',
+            'tooltip-agenda': 'Agenda Announcement',
+            'label-activity': 'Activity Name',
+            'label-location': 'Location',
+            'label-time': 'Time',
+            'label-material': 'Material',
+            'label-speaker': 'Speaker/Ustadz',
+            'btn-add-custom': 'Add Custom Item',
+            'label-custom-title': 'Custom Title',
+            'label-custom-content': 'Content'
         },
         'id': {
             'nav-home': 'BERANDA',
@@ -276,7 +304,20 @@ document.addEventListener('DOMContentLoaded', () => {
             'label-pihps': 'PIHPS',
             'label-sop': 'SOP',
             'label-sph': 'SPH',
-            'label-notes': 'CATATAN'
+            'label-notes': 'CATATAN',
+            'nav-agenda-notes': 'PENGUMUMAN AGENDA',
+            'agenda-modal-title': 'Pengumuman Agenda',
+            'title-agenda-list': 'Detail Agenda',
+            'label-agenda': 'AGENDA',
+            'tooltip-agenda': 'Pengumuman Agenda',
+            'label-activity': 'Nama Kegiatan',
+            'label-location': 'Tempat',
+            'label-time': 'Jam',
+            'label-material': 'Materi Kegiatan',
+            'label-speaker': 'Ustadz/Pengisi',
+            'btn-add-custom': 'Tambah Baris Kustom',
+            'label-custom-title': 'Judul Kustom',
+            'label-custom-content': 'Isi'
         }
     };
 
@@ -547,6 +588,100 @@ document.addEventListener('DOMContentLoaded', () => {
         return row;
     }
 
+    function createAgendaRow(activity = '', location = '', time = '', material = '', speaker = '') {
+        const row = document.createElement('div');
+        row.className = 'agenda-row';
+        row.innerHTML = `
+            <div class="input-group">
+                <label data-key="label-activity">${translations[currentLang]['label-activity']}</label>
+                <input type="text" class="activity-input" placeholder="${translations[currentLang]['label-activity']}" value="${activity}">
+            </div>
+            <div class="input-group">
+                <label data-key="label-location">${translations[currentLang]['label-location']}</label>
+                <input type="text" class="location-input" placeholder="${translations[currentLang]['label-location']}" value="${location}">
+            </div>
+            <div class="input-group">
+                <label data-key="label-time">${translations[currentLang]['label-time']}</label>
+                <input type="text" class="time-input" placeholder="${translations[currentLang]['label-time']}" value="${time}">
+            </div>
+            <div class="agenda-row-secondary">
+                <div class="input-group">
+                    <label data-key="label-material">${translations[currentLang]['label-material']}</label>
+                    <input type="text" class="material-input" placeholder="${translations[currentLang]['label-material']}" value="${material}">
+                </div>
+                <div class="input-group">
+                    <label data-key="label-speaker">${translations[currentLang]['label-speaker']}</label>
+                    <input type="text" class="speaker-input" placeholder="${translations[currentLang]['label-speaker']}" value="${speaker}">
+                </div>
+            </div>
+            <button class="remove-row-btn"><i class="fas fa-trash"></i></button>
+        `;
+
+        row.querySelector('.remove-row-btn').addEventListener('click', () => {
+            row.remove();
+            checkAgendaRemoveButtons();
+        });
+
+        return row;
+    }
+
+    function createAgendaCustomRow(title = '', content = '') {
+        const row = document.createElement('div');
+        row.className = 'agenda-row agenda-custom-row';
+        row.innerHTML = `
+            <div class="input-group" style="grid-column: span 2;">
+                <label data-key="label-custom-title">${translations[currentLang]['label-custom-title']}</label>
+                <input type="text" class="custom-title-input" placeholder="${translations[currentLang]['label-custom-title']}" value="${title}">
+            </div>
+            <div class="input-group" style="grid-column: span 2;">
+                <label data-key="label-custom-content">${translations[currentLang]['label-custom-content']}</label>
+                <textarea class="custom-content-input auto-expand" placeholder="${translations[currentLang]['label-custom-content']}" rows="1">${content}</textarea>
+            </div>
+            <button class="remove-row-btn"><i class="fas fa-trash"></i></button>
+        `;
+
+        row.querySelector('.remove-row-btn').addEventListener('click', () => {
+            row.remove();
+        });
+
+        // Initialize auto-expand for the custom content textarea
+        const textarea = row.querySelector('textarea');
+        if (textarea) {
+            textarea.addEventListener('input', () => autoResize(textarea));
+            setTimeout(() => autoResize(textarea), 0);
+        }
+
+        return row;
+    }
+
+    function checkAgendaRemoveButtons() {
+        const rows = agendaRowsContainer.querySelectorAll('.agenda-row');
+        rows.forEach(row => {
+            const btn = row.querySelector('.remove-row-btn');
+            btn.style.display = rows.length > 1 ? 'flex' : 'none';
+        });
+    }
+
+    if (addAgendaRowBtn) {
+        addAgendaRowBtn.addEventListener('click', () => {
+            agendaRowsContainer.appendChild(createAgendaRow());
+            checkAgendaRemoveButtons();
+        });
+    }
+
+    if (addAgendaCustomRowBtn) {
+        addAgendaCustomRowBtn.addEventListener('click', () => {
+            agendaRowsContainer.appendChild(createAgendaCustomRow());
+        });
+    }
+
+    // Initialize Agenda
+    if (agendaRowsContainer) {
+        agendaRowsContainer.innerHTML = '';
+        agendaRowsContainer.appendChild(createAgendaRow());
+        checkAgendaRemoveButtons();
+    }
+
     function checkFindingRemoveButtons() {
         const rows = findingRowsContainer.querySelectorAll('.finding-row');
         rows.forEach(row => {
@@ -610,6 +745,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Handle all open-agenda-modal buttons
+    document.querySelectorAll('.open-agenda-modal').forEach(btn => {
+        btn.addEventListener('click', () => {
+            agendaModal.classList.add('active');
+            setTimeout(() => { if (agendaTitleInput) agendaTitleInput.focus(); }, 100);
+        });
+    });
+
     // SOP Modal triggers
     document.querySelectorAll('.open-sop-modal').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -647,6 +790,27 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('click', (e) => {
         if (e.target === noteModal) {
             noteModal.classList.remove('active');
+        }
+    });
+
+    if (navAgendaTrigger) {
+        navAgendaTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            nav.classList.remove('active');
+            agendaModal.classList.add('active');
+            setTimeout(() => { if (agendaTitleInput) agendaTitleInput.focus(); }, 100);
+        });
+    }
+
+    if (closeAgenda) {
+        closeAgenda.addEventListener('click', () => {
+            agendaModal.classList.remove('active');
+        });
+    }
+
+    window.addEventListener('click', (e) => {
+        if (e.target === agendaModal) {
+            agendaModal.classList.remove('active');
         }
     });
 
@@ -696,6 +860,101 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Failed to save note. Storage might be full.');
         }
     });
+
+    function getAgendaData() {
+        const items = [];
+        agendaRowsContainer.querySelectorAll('.agenda-row').forEach(row => {
+            if (row.classList.contains('agenda-custom-row')) {
+                items.push({
+                    type: 'custom',
+                    title: row.querySelector('.custom-title-input').value,
+                    content: row.querySelector('.custom-content-input').value
+                });
+            } else {
+                items.push({
+                    type: 'standard',
+                    activity: row.querySelector('.activity-input').value,
+                    location: row.querySelector('.location-input').value,
+                    time: row.querySelector('.time-input').value,
+                    material: row.querySelector('.material-input').value,
+                    speaker: row.querySelector('.speaker-input').value
+                });
+            }
+        });
+
+        return {
+            type: 'agenda',
+            title: agendaTitleInput.value,
+            date: agendaDateInput.value,
+            items: items
+        };
+    }
+
+    if (saveAgendaNoteBtn) {
+        saveAgendaNoteBtn.addEventListener('click', () => {
+            const currentData = getAgendaData();
+            const reports = JSON.parse(localStorage.getItem('user_reports') || '[]');
+            reports.unshift(currentData);
+            localStorage.setItem('user_reports', JSON.stringify(reports));
+            renderReports();
+
+            const originalHTML = saveAgendaNoteBtn.innerHTML;
+            saveAgendaNoteBtn.innerHTML = translations[currentLang]['saved'];
+            saveAgendaNoteBtn.classList.add('saved');
+            setTimeout(() => {
+                saveAgendaNoteBtn.innerHTML = originalHTML;
+                saveAgendaNoteBtn.classList.remove('saved');
+            }, 2000);
+        });
+    }
+
+    if (whatsappAgendaBtn) {
+        whatsappAgendaBtn.addEventListener('click', () => {
+            const data = getAgendaData();
+            const d = new Date(data.date);
+            const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            const dateStr = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+
+            let text = `*Pr Hudha*\n`;
+            text += `[A] [G] [E] [N] [D] [A]\n`;
+            text += `*H A R I 🗓️ I N I*\n\n`;
+            text += `*السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ*\n\n`;
+            text += `🗓️ \`\` ${dateStr} "\n\n`;
+            text += `*:: ${data.title || 'Agenda'} ::*\n`;
+
+            data.items.forEach(item => {
+                if (item.type === 'custom') {
+                    text += `👉 *${item.title}:* ${item.content}\n`;
+                } else {
+                    text += `🕌 *${item.location}*\n`;
+                    text += `⏰ *${item.time}* WiB\n`;
+                    text += `*${item.activity}*\n`;
+                    if (item.material) text += `📒 *${item.material}*\n`;
+                    if (item.speaker) text += `*(${item.speaker})*\n`;
+                }
+                text += `\n`;
+            });
+
+            text += `*Diniati karena Alloh, Mg2 ALLOH paring aman sehat selamat lancar barokah.*\n\n`;
+            text += `*الْحَمْدُ لِلَّهِ جَزَا كُمُ اللَّهُ خَيْرًا*\n`;
+            text += `*وَالسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ*`;
+
+            window.open(`https://api.whatsapp.com/send?phone=6285927326555&text=${encodeURIComponent(text)}`, '_blank');
+        });
+    }
+
+    if (clearAgendaNoteBtn) {
+        clearAgendaNoteBtn.addEventListener('click', () => {
+            if (confirm(currentLang === 'en' ? 'Clear all data?' : 'Hapus semua data?')) {
+                agendaTitleInput.value = '';
+                agendaDateInput.value = '';
+                agendaRowsContainer.innerHTML = '';
+                agendaRowsContainer.appendChild(createAgendaRow());
+                checkAgendaRemoveButtons();
+            }
+        });
+    }
 
     // --- Reports Gallery Rendering ---
     const reportsContainer = document.getElementById('reports-container');
@@ -794,6 +1053,31 @@ document.addEventListener('DOMContentLoaded', () => {
                              <button class="card-wa-btn" onclick="window.open('https://api.whatsapp.com/send?phone=6285927326555&text=${encodeURIComponent(`SOP Perubahan Harga mingguan ${note.market || 'Pasar ...'} ${cardDateStr} :\n\n` + (note.items ? note.items.map((item, i) => `${i + 1}. ${item.commodity || '...'}: ${translations[currentLang][item.status] || 'tetap'}${item.cause ? ' karena ' + item.cause : ''}`).join('\n') : ''))}', '_blank')">
                                 <i class="fab fa-whatsapp"></i>
                              </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (note.type === 'agenda') {
+                return `
+                    <div class="report-card agenda-report-card">
+                        <div class="report-header">
+                            <div class="report-title"><i class="fas fa-calendar-check"></i> ${note.title || 'AGENDA'}</div>
+                            <div class="report-date">${cardDateStr}</div>
+                        </div>
+                        <div class="report-items-list">
+                            ${note.items ? note.items.map((item, i) => `
+                                <div class="report-item">
+                                    ${item.type === 'custom' ? `
+                                        <strong>👉 ${item.title || '...'}:</strong> ${item.content || '...'}
+                                    ` : `
+                                        <strong>${item.activity || '...'}</strong>
+                                        <div style="font-size: 0.85rem; opacity: 0.7;">
+                                            <i class="fas fa-mosque"></i> ${item.location || '...'} | <i class="fas fa-clock"></i> ${item.time || '...'}
+                                        </div>
+                                    `}
+                                </div>
+                            `).join('') : '<div class="report-item">No items</div>'}
                         </div>
                     </div>
                 `;

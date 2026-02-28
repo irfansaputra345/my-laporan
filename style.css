@@ -1054,6 +1054,16 @@ p {
     border-top-color: #9c27b0;
 }
 
+.open-agenda-modal:hover {
+    border-color: #2e7d32;
+    color: #2e7d32;
+    box-shadow: 0 0 35px rgba(46, 125, 50, 0.4);
+}
+
+.open-agenda-modal::after {
+    border-top-color: #2e7d32;
+}
+
 @keyframes iconFloat {
 
     0%,
@@ -1113,6 +1123,10 @@ p {
 
 .open-sph-modal:hover i {
     filter: drop-shadow(0 0 15px rgba(156, 39, 176, 0.6));
+}
+
+.open-agenda-modal:hover i {
+    filter: drop-shadow(0 0 15px rgba(46, 125, 50, 0.6));
 }
 
 .scroll-indicator {
@@ -1494,6 +1508,41 @@ p {
     box-shadow: 0 0 0 3px rgba(218, 41, 28, 0.15);
 }
 
+/* Modal Specific Overrides for Readability */
+.modal-content.glass .input-group label {
+    color: #333;
+}
+
+.modal-content.glass .input-group input::placeholder,
+.modal-content.glass textarea::placeholder {
+    color: #777;
+}
+
+.modal-content.glass #add-commodity-btn,
+.modal-content.glass #add-merchant-btn,
+.modal-content.glass #add-sop-row-btn,
+.modal-content.glass #add-sph-row-btn,
+.modal-content.glass #add-finding-btn,
+.modal-content.glass .btn-secondary {
+    color: #1a1a1a;
+}
+
+.modal-content.glass .input-group input,
+.modal-content.glass .input-group select,
+.modal-content.glass .input-group textarea {
+    background: rgba(0, 0, 0, 0.05);
+    /* Lighter background for inputs in white modals */
+    color: #1a1a1a;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.modal-content.glass .input-group input:focus,
+.modal-content.glass .input-group select:focus,
+.modal-content.glass .input-group textarea:focus {
+    background: rgba(0, 0, 0, 0.08);
+    border-color: var(--accent-color);
+}
+
 .modal-actions-list {
     display: flex;
     flex-direction: column;
@@ -1671,20 +1720,25 @@ p {
 
 .input-group label {
     font-size: 0.8rem;
-    color: rgba(0, 0, 0, 0.6);
+    color: rgba(255, 255, 255, 0.7);
     font-family: var(--font-heading);
     font-weight: 600;
+    margin-bottom: 5px;
+    display: block;
 }
 
 .input-group input,
 .input-group select {
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    padding: 0.6rem;
-    color: #1a1a1a;
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    color: #fff;
     font-family: var(--font-body);
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    font-size: 0.95rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .input-group select option {
@@ -1696,13 +1750,13 @@ p {
 .input-group select:focus {
     outline: none;
     border-color: var(--accent-color);
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(218, 41, 28, 0.15);
+    background: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 0 3px rgba(218, 41, 28, 0.3);
 }
 
 .input-group input::placeholder,
 textarea::placeholder {
-    color: rgba(0, 0, 0, 0.3);
+    color: rgba(255, 255, 255, 0.4);
 }
 
 /* Full width for cause on mobile or just make it 3 columns? Let's make it responsive. */
@@ -2004,6 +2058,11 @@ textarea::placeholder {
     border-left: 4px solid #9c27b0;
 }
 
+/* Agenda Card Styling */
+.agenda-report-card {
+    border-left: 4px solid #2e7d32;
+}
+
 .sop-status-pill {
     display: inline-block;
     padding: 2px 8px;
@@ -2124,16 +2183,75 @@ textarea.auto-expand {
 }
 
 .input-group textarea {
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
     color: #fff;
     width: 100%;
+    padding: 12px 16px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .input-group textarea:focus {
     outline: none;
     border-color: var(--accent-color);
-    background: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 0 0 3px rgba(218, 41, 28, 0.15);
+    background: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 0 3px rgba(218, 41, 28, 0.3);
+}
+
+/* Agenda Row Styles */
+.agenda-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 0.6fr auto;
+    gap: 1rem;
+    align-items: flex-end;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1.2rem;
+    border-radius: 16px;
+    margin-bottom: 1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.agenda-row:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.agenda-row-secondary {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 0.8rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    padding-top: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .agenda-row {
+        grid-template-columns: 1fr 1fr auto;
+    }
+
+    .agenda-row-secondary {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-content.glass .agenda-row .remove-row-btn {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        width: 24px;
+        height: 24px;
+        background: var(--accent-color);
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
 }
