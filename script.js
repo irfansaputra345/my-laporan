@@ -198,6 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'btn-word': '<i class="fas fa-file-word"></i> Word',
             'title-clear': 'Clear All',
             'btn-add-item': 'Add Item',
+            'btn-clear-all': 'Clear All',
             'btn-add-merchant': 'Add Merchant',
             'title-findings': 'Finding Details',
             'nav-gen-notes': 'GENERAL NOTES',
@@ -289,6 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'btn-word': '<i class="fas fa-file-word"></i> Word',
             'title-clear': 'Clear All',
             'btn-add-item': 'Tambah Temuan',
+            'btn-clear-all': 'Hapus Semua',
             'btn-add-merchant': 'Tambah Pedagang',
             'title-findings': 'Detail Temuan',
             'nav-sop-notes': 'SOP PERUBAHAN HARGA',
@@ -927,7 +929,8 @@ document.addEventListener('DOMContentLoaded', () => {
             text += `*الْحَمْدُ لِلَّهِ جَزَا كُمُ اللَّهُ خَيْرًا*\n`;
             text += `*وَالسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ*`;
 
-            window.open(`https://api.whatsapp.com/send?phone=6285927326555&text=${encodeURIComponent(text)}`, '_blank');
+            const groupLink = "https://chat.whatsapp.com/GE3iST8Ac2UDoyrXbHJDOV";
+            window.open(`${groupLink}?text=${encodeURIComponent(text)}`, '_blank');
         });
     }
 
@@ -1007,7 +1010,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }).join('') : '<div class="report-item">No items</div>'}
                         </div>
                         <div class="report-footer" style="justify-content: flex-end;">
-                             <button class="card-wa-btn" onclick="window.open('https://api.whatsapp.com/send?phone=6285927326555&text=${encodeURIComponent(`Laporan SPH ${cardDateStr} :\n\nKomoditas Naik:\n` + (note.items.filter(i => i.status === 'status-naik').map(i => `- ${i.commodity}`).join('\n') || '- (Nihil)') + `\n\nKomoditas Turun:\n` + (note.items.filter(i => i.status === 'status-turun').map(i => `- ${i.commodity}`).join('\n') || '- (Nihil)'))}', '_blank')">
+                             <button class="card-wa-btn" onclick="window.open('https://api.whatsapp.com/send?phone=6287847712990&text=${encodeURIComponent(`Laporan SPH ${cardDateStr} :\n\nKomoditas Naik:\n` + (note.items.filter(i => i.status === 'status-naik').map(i => `- ${i.commodity}`).join('\n') || '- (Nihil)') + `\n\nKomoditas Turun:\n` + (note.items.filter(i => i.status === 'status-turun').map(i => `- ${i.commodity}`).join('\n') || '- (Nihil)'))}', '_blank')">
                                 <i class="fab fa-whatsapp"></i>
                              </button>
                         </div>
@@ -1037,7 +1040,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="report-footer">
                              <div class="report-market"><i class="fas fa-store"></i> ${note.market || '...'}</div>
-                             <button class="card-wa-btn" onclick="window.open('https://api.whatsapp.com/send?phone=6285927326555&text=${encodeURIComponent(`SOP Perubahan Harga mingguan ${note.market || 'Pasar ...'} ${cardDateStr} :\n\n` + (note.items ? note.items.map((item, i) => `${i + 1}. ${item.commodity || '...'}: ${translations[currentLang][item.status] || 'tetap'}${item.cause ? ' karena ' + item.cause : ''}`).join('\n') : ''))}', '_blank')">
+                             <button class="card-wa-btn" onclick="window.open('https://api.whatsapp.com/send?phone=6287847712990&text=${encodeURIComponent(`SOP Perubahan Harga mingguan ${note.market || 'Pasar ...'} ${cardDateStr} :\n\n` + (note.items ? note.items.map((item, i) => `${i + 1}. ${item.commodity || '...'}: ${translations[currentLang][item.status] || 'tetap'}${item.cause ? ' karena ' + item.cause : ''}`).join('\n') : ''))}', '_blank')">
                                 <i class="fab fa-whatsapp"></i>
                              </button>
                         </div>
@@ -2328,9 +2331,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const target = mutation.target;
                 if (target.classList.contains('modal') && target.classList.contains('active')) {
                     resetIdleTimer();
+                    document.body.classList.add('modal-active');
                 } else if (target.classList.contains('modal') && !document.querySelector('.modal.active')) {
                     assistantRobot.classList.remove('dizzy');
                     clearTimeout(idleTimer);
+                    document.body.classList.remove('modal-active');
                 }
             }
         });
