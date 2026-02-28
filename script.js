@@ -143,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addAgendaRowBtn = document.getElementById('add-agenda-row-btn');
     const saveAgendaNoteBtn = document.getElementById('save-agenda-note');
     const whatsappAgendaBtn = document.getElementById('whatsapp-agenda');
+    const whatsappGenNoteBtn = document.getElementById('whatsapp-gen-note');
     const downloadAgendaBtn = document.getElementById('download-agenda');
     const downloadAgendaWordBtn = document.getElementById('download-agenda-word');
     const clearAgendaNoteBtn = document.getElementById('clear-agenda-note');
@@ -918,31 +919,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
             const dateStr = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 
-            let text = `*Pr Hudha*\n`;
-            text += `[A] [G] [E] [N] [D] [A]\n`;
-            text += `*H A R I 🗓️ I N I*\n\n`;
-            text += `*السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ*\n\n`;
-            text += `🗓️ \`\` ${dateStr} "\n\n`;
-            text += `*:: ${data.title || 'Agenda'} ::*\n`;
+            let text = `*Pengumuman Agenda*\n\n`;
+            text += `Tanggal: ${dateStr}\n`;
+            text += `Judul: ${data.title || '-'}\n\n`;
+            text += `*Detail Agenda:*\n\n`;
 
-            data.items.forEach(item => {
+            data.items.forEach((item, i) => {
                 if (item.type === 'custom') {
-                    text += `👉 *${item.title}:* ${item.content}\n`;
+                    text += `${i + 1}. *${item.title}:* ${item.content}\n`;
                 } else {
-                    text += `🕌 *${item.location}*\n`;
-                    text += `⏰ *${item.time}* WiB\n`;
-                    text += `*${item.activity}*\n`;
-                    if (item.material) text += `📒 *${item.material}*\n`;
-                    if (item.speaker) text += `*(${item.speaker})*\n`;
+                    text += `${i + 1}. *${item.activity}*\n`;
+                    text += `   Tempat: ${item.location}\n`;
+                    text += `   Jam: ${item.time} WiB\n`;
+                    if (item.material) text += `   Materi: ${item.material}\n`;
+                    if (item.speaker) text += `   Pengisi: ${item.speaker}\n`;
                 }
                 text += `\n`;
             });
 
-            text += `*Diniati karena Alloh, Mg2 ALLOH paring aman sehat selamat lancar barokah.*\n\n`;
-            text += `*الْحَمْدُ لِلَّهِ جَزَا كُمُ اللَّهُ خَيْرًا*\n`;
-            text += `*وَالسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ*`;
-
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+            const phone = "087847712990";
+            const encodedMsg = encodeURIComponent(text);
+            const waUrl = `https://api.whatsapp.com/send?phone=${phone.replace(/^0/, '62')}&text=${encodedMsg}`;
+            window.open(waUrl, '_blank');
         });
     }
 
@@ -1355,6 +1353,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateBodyModalClass();
             }
         });
+
+        if (whatsappGenNoteBtn) {
+            whatsappGenNoteBtn.addEventListener('click', () => {
+                const data = {
+                    title: genNoteTitle.value,
+                    date: genNoteDateInput.value,
+                    content: genNoteArea.value
+                };
+                const phone = "087847712990";
+                const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+                let waDateStr;
+
+                if (data.date) {
+                    const dateObj = new Date(data.date);
+                    waDateStr = `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+                } else {
+                    const now = new Date();
+                    waDateStr = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+                }
+
+                let message = `*Catatan Laporan*\n\n`;
+                message += `Judul: ${data.title || '-'}\n`;
+                message += `Tanggal: ${waDateStr}\n\n`;
+                message += `${data.content || ''}`;
+
+                const encodedMsg = encodeURIComponent(message);
+                const waUrl = `https://api.whatsapp.com/send?phone=${phone.replace(/^0/, '62')}&text=${encodedMsg}`;
+                window.open(waUrl, '_blank');
+            });
+        }
 
         saveGenNoteBtn.addEventListener('click', () => {
             try {
