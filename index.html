@@ -57,29 +57,17 @@
             <button class="icon-btn" id="lang-btn" title="Switch Language">
                 <i class="fas fa-language"></i>
             </button>
-            <button class="menu-toggle" id="menu-btn">
-
-                <span></span>
-                <span></span>
+            <button class="icon-btn" id="header-robot-btn" title="Open Assistant">
+                <div class="robot-head-mini">
+                    <div class="robot-eye left"></div>
+                    <div class="robot-eye right"></div>
+                </div>
             </button>
+            <!-- Progress Overlay -->
+            <div id="intro-overlay">
+            </div>
         </div>
     </header>
-
-    <nav id="fullscreen-nav">
-        <ul>
-            <li><a href="#" class="nav-link" data-index="0" data-key="nav-home">HOME</a></li>
-            <li><a href="#" class="nav-link" data-index="1" data-key="nav-features">FEATURES</a></li>
-            <li><a href="#" class="nav-link" data-index="2" data-key="nav-concept">CONCEPT</a></li>
-            <li><a href="#" class="nav-link" data-index="3" data-key="nav-exp">EXPERIENCE</a></li>
-            <li><a href="#" class="nav-link" id="nav-note-trigger" data-key="nav-notes">PIHPS REPORTS</a></li>
-            <li><a href="#" class="nav-link" id="nav-sop-trigger" data-key="nav-sop-notes">SOP PRICE CHANGE</a></li>
-            <li><a href="#" class="nav-link" id="nav-sph-trigger" data-key="nav-sph-notes">SPH REPORTS</a></li>
-            <li><a href="#" class="nav-link" id="nav-agenda-trigger" data-key="nav-agenda-notes">AGENDA ANNOUNCEMENT</a>
-            </li>
-            <li><a href="#" class="nav-link" id="nav-gen-note-trigger" data-key="nav-gen-notes">GENERAL NOTES</a></li>
-            <li><a href="#" class="nav-link" data-index="3" data-key="nav-contact">CONTACT</a></li>
-        </ul>
-    </nav>
 
     <!-- Main Content (Scenes) -->
     <main id="main-container">
@@ -524,6 +512,104 @@
         </div>
     </div>
 
+    </div>
+
+    <!-- Robot Assistant Sidebar -->
+    <div id="robot-sidebar" class="glass">
+        <div class="sidebar-header">
+            <div class="assistant-avatar">
+                <div class="robot-head mini bumblebee-head">
+                    <div class="robot-eye left"></div>
+                    <div class="robot-eye right"></div>
+                </div>
+            </div>
+            <div class="assistant-info">
+                <h3>ROBO ASISTEN</h3>
+                <p>Ready to help</p>
+            </div>
+            <button id="close-sidebar" class="close-btn">&times;</button>
+        </div>
+
+        <div class="sidebar-content">
+            <!-- Sidebar Assistant Interaction -->
+            <div class="sidebar-dialogue-section">
+                <div class="assistant-avatar large">
+                    <div class="robot-head bumblebee-head">
+                        <div class="robot-eye left"></div>
+                        <div class="robot-eye right"></div>
+                    </div>
+                </div>
+                <div class="sidebar-robot-bubble glass">
+                    <p class="sidebar-robot-msg" data-key="robot-greet">Assalamu'alaikum! I'm your assistant.</p>
+                </div>
+                <div class="sidebar-input-wrapper">
+                    <input type="text" id="sidebar-robot-input" placeholder="Tanya sesuatu..." autocomplete="off">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h4 data-key="nav-title">NAVIGATION</h4>
+                <ul class="sidebar-nav-list">
+                    <li><a href="#" class="sidebar-nav-link" data-index="0" data-key="nav-home"><i
+                                class="fas fa-home"></i> HOME</a></li>
+                    <li><a href="#" class="sidebar-nav-link" data-index="1" data-key="nav-features"><i
+                                class="fas fa-star"></i> FEATURES</a></li>
+                    <li><a href="#" class="sidebar-nav-link" data-index="2" data-key="nav-concept"><i
+                                class="fas fa-lightbulb"></i> CONCEPT</a></li>
+                    <li><a href="#" class="sidebar-nav-link" data-index="3" data-key="nav-exp"><i
+                                class="fas fa-rocket"></i> EXPERIENCE</a></li>
+                    <li><a href="#" class="sidebar-nav-link" data-index="3" data-key="nav-contact"><i
+                                class="fas fa-envelope"></i> CONTACT</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h4 data-key="title-quick-actions">REPORTS & NOTES</h4>
+                <div class="action-grid">
+                    <button class="sidebar-action-btn open-agenda-modal">
+                        <i class="fas fa-calendar-check" style="color: #2e7d32;"></i>
+                        <span>Agenda</span>
+                    </button>
+                    <button class="sidebar-action-btn open-note-modal">
+                        <i class="fas fa-file-invoice" style="color: #da291c;"></i>
+                        <span>PIHPS</span>
+                    </button>
+                    <button class="sidebar-action-btn open-sop-modal">
+                        <i class="fas fa-chart-column" style="color: #00bcd4;"></i>
+                        <span>SOP</span>
+                    </button>
+                    <button class="sidebar-action-btn open-sph-modal">
+                        <i class="fas fa-list-ol" style="color: #9c27b0;"></i>
+                        <span>SPH</span>
+                    </button>
+                    <button class="sidebar-action-btn open-gen-note-modal">
+                        <i class="fas fa-pen-fancy" style="color: #d4af37;"></i>
+                        <span>Notes</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-section status-section">
+                <h4 data-key="title-system-status">SYSTEM STATUS</h4>
+                <div class="status-item">
+                    <span>Storage</span>
+                    <div class="status-bar">
+                        <div class="bar-fill" style="width: 45%;"></div>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <span>Performance</span>
+                    <div class="status-indicator online">OPTIMAL</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <p>&copy; 2026 IRFAN SAPUTRA | VER 2.5</p>
+        </div>
+    </div>
+
     <!-- Persistent Helper Robot -->
     <div id="assistant-robot" class="robot-character mini">
         <div class="robot-dialogue glass">
@@ -533,12 +619,45 @@
             </div>
             <div class="dialogue-arrow"></div>
         </div>
-        <div class="robot-head">
-            <div class="robot-eye left"></div>
-            <div class="robot-eye right"></div>
+        <!-- Bumblebee Robot Form -->
+        <div class="robot-body-wrapper">
+            <div class="robot-head bumblebee-head">
+                <div class="robot-eye left"></div>
+                <div class="robot-eye right"></div>
+                <div class="head-detail"></div>
+            </div>
+            <div class="robot-torso">
+                <div class="torso-plate"></div>
+                <div class="chest-detail"></div>
+            </div>
+            <div class="robot-arms">
+                <div class="arm left-arm"></div>
+                <div class="arm right-arm"></div>
+            </div>
+            <div class="robot-legs">
+                <div class="leg left-leg"></div>
+                <div class="leg right-leg"></div>
+            </div>
         </div>
-        <div class="robot-body"></div>
+        <!-- Bumblebee Car Form (Muscular Sports Car) -->
+        <div class="robot-car-mode bumblebee-car">
+            <div class="car-body">
+                <div class="car-roof"></div>
+                <div class="car-hood"></div>
+                <div class="car-spoiler"></div>
+                <div class="car-headlight left"></div>
+                <div class="car-headlight right"></div>
+            </div>
+            <i class="fas fa-car-side"></i>
+            <div class="car-wheels">
+                <div class="car-wheel wheel-front"></div>
+                <div class="car-wheel wheel-back"></div>
+            </div>
+        </div>
     </div>
+
+    <!-- Screen Crash Effect -->
+    <div id="screen-crack-overlay"></div>
 
     <!-- GSAP Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>

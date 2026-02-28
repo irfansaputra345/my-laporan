@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const introRobot = document.getElementById('intro-robot');
     const loadingBar = document.querySelector('.loading-bar');
     const assistantRobot = document.getElementById('assistant-robot');
+    const robotSidebar = document.getElementById('robot-sidebar');
+    const closeSidebarBtn = document.getElementById('close-sidebar');
+    const headerRobotBtn = document.getElementById('header-robot-btn');
+    const sidebarRobotInput = document.getElementById('sidebar-robot-input');
+    const sidebarRobotMsg = document.querySelector('.sidebar-robot-msg');
     let dizzyTimeout;
     let shakeTimeout;
 
@@ -89,10 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const menuToggle = document.getElementById('menu-btn');
-    const nav = document.getElementById('fullscreen-nav');
-    const menuLinks = document.querySelectorAll('.nav-link');
-
     // --- General Note Elements ---
     const genNoteBtn = document.getElementById('gen-note-btn');
     const genNoteModal = document.getElementById('gen-note-modal');
@@ -161,6 +162,9 @@ document.addEventListener('DOMContentLoaded', () => {
             'feature-2-desc': 'Export your findings directly to PDF, Word, or send via WhatsApp.',
             'feature-3-desc': 'Data is securely stored in the cloud, allowing report access from any device.',
             'nav-contact': 'CONTACT',
+            'nav-title': 'NAVIGATION',
+            'title-quick-actions': 'REPORTS & NOTES',
+            'title-system-status': 'SYSTEM STATUS',
             'robot-greet': 'Hello! I am <strong>IRBOT</strong>. How can I help you today?',
             'robot-thanks': 'Thanks for the message! I am <strong>IRBOT</strong>, and I will help you recording everything.',
             'robot-shake': 'Whoa! Stop shaking! <strong>IRBOT</strong> is so dizzy...',
@@ -246,6 +250,9 @@ document.addEventListener('DOMContentLoaded', () => {
             'feature-2-desc': 'Ekspor laporan temuan Anda langsung ke format PDF, Word, atau kirim via WhatsApp.',
             'feature-3-desc': 'Data tersimpan aman di sistem awan, memungkinkan akses laporan dari perangkat mana saja.',
             'nav-contact': 'KONTAK',
+            'nav-title': 'NAVIGASI',
+            'title-quick-actions': 'LAPORAN & CATATAN',
+            'title-system-status': 'STATUS SISTEM',
             'robot-greet': 'Halo! Saya <strong>IRBOT</strong>. Ada yang bisa saya bantu hari ini?',
             'robot-thanks': 'Terima kasih pesannya! Saya <strong>IRBOT</strong>, dan saya akan bantu mencatat semuanya.',
             'robot-shake': 'Waduh! Jangan digoyang-goyang! <strong>IRBOT</strong> pusing...',
@@ -431,8 +438,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const now = Date.now();
         if (now - lastScrollTime < scrollDelay || isAnimating) return;
 
-        // Prevent scene transitions when modal or navigation is active
-        if (noteModal.classList.contains('active') || nav.classList.contains('active')) return;
+        // Prevent scene transitions when modal or robot sidebar is active
+        if (noteModal.classList.contains('active') || robotSidebar.classList.contains('active')) return;
 
         if (direction > 0) {
             goToScene(currentIndex + 1);
@@ -457,34 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
         handleScroll(touchStartY - touchEndY); // Swipe up = scroll down
     }, { passive: true });
 
-    // --- Menu Toggle ---
-    menuToggle.addEventListener('click', () => {
-        nav.classList.toggle('active');
-        if (nav.classList.contains('active')) {
-            gsap.fromTo(menuLinks,
-                { x: 30, opacity: 0 }, // Changed y to x for sidebar slide-in effect
-                { x: 0, opacity: 1, duration: 0.35, stagger: 0.07, delay: 0.2 }
-            );
-        }
-    });
-
-    // Close menu and navigate on link click
-    menuLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            nav.classList.remove('active');
-
-            const index = link.getAttribute('data-index');
-            if (index !== null) {
-                goToScene(parseInt(index));
-            }
-
-            // Special handling for "MY NOTES" link
-            if (link.id === 'nav-note-trigger') {
-                noteModal.classList.add('active');
-            }
-        });
-    });
+    // --- Removed Old Menu Logic ---
 
     // --- Background Modern Display ---
 
@@ -594,7 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
         row.innerHTML = `
             <div class="input-group">
                 <label data-key="label-activity">${translations[currentLang]['label-activity']}</label>
-                <input type="text" class="activity-input" placeholder="${translations[currentLang]['label-activity']}" value="${activity}">
+                <textarea class="activity-input auto-expand" placeholder="${translations[currentLang]['label-activity']}" rows="1">${activity}</textarea>
             </div>
             <div class="input-group">
                 <label data-key="label-location">${translations[currentLang]['label-location']}</label>
@@ -607,7 +587,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="agenda-row-secondary">
                 <div class="input-group">
                     <label data-key="label-material">${translations[currentLang]['label-material']}</label>
-                    <input type="text" class="material-input" placeholder="${translations[currentLang]['label-material']}" value="${material}">
+                    <textarea class="material-input auto-expand" placeholder="${translations[currentLang]['label-material']}" rows="1">${material}</textarea>
                 </div>
                 <div class="input-group">
                     <label data-key="label-speaker">${translations[currentLang]['label-speaker']}</label>
@@ -620,6 +600,13 @@ document.addEventListener('DOMContentLoaded', () => {
         row.querySelector('.remove-row-btn').addEventListener('click', () => {
             row.remove();
             checkAgendaRemoveButtons();
+        });
+
+        // Add auto-expand logic
+        row.querySelectorAll('textarea.auto-expand').forEach(textarea => {
+            textarea.addEventListener('input', () => autoResize(textarea));
+            // Initial resize logic
+            setTimeout(() => autoResize(textarea), 0);
         });
 
         return row;
@@ -1971,6 +1958,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 0. Dragging Logic
     let isDragging = false;
+    let dragDistance = 0;
+    let startX, startY;
     let offsetX, offsetY;
 
     assistantRobot.addEventListener('mousedown', startDrag);
@@ -1978,9 +1967,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function startDrag(e) {
         isDragging = true;
+        dragDistance = 0;
         assistantRobot.style.transition = 'none';
+        assistantRobot.classList.add('grabbing');
         const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
         const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+        startX = clientX;
+        startY = clientY;
         const rect = assistantRobot.getBoundingClientRect();
         offsetX = clientX - rect.left;
         offsetY = clientY - rect.top;
@@ -1996,6 +1989,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
         const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
 
+        dragDistance = Math.hypot(clientX - startX, clientY - startY);
+
         assistantRobot.style.left = (clientX - offsetX) + 'px';
         assistantRobot.style.top = (clientY - offsetY) + 'px';
         assistantRobot.style.bottom = 'auto';
@@ -2006,64 +2001,236 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function endDrag() {
         isDragging = false;
+        assistantRobot.classList.remove('grabbing');
         document.removeEventListener('mousemove', drag);
         document.removeEventListener('touchmove', drag);
         assistantRobot.style.transition = 'opacity 0.5s ease';
     }
 
-    // 0.1 Click Interaction
-    assistantRobot.addEventListener('click', (e) => {
-        if (isDragging) return;
+    // 0.1 Click Interaction (Multi-Action Transformer)
+    let isTransforming = false;
+    let clickCount = 0;
+    let clickTimer = null;
+    const screenCrackOverlay = document.getElementById('screen-crack-overlay');
 
-        // Prevent closing when clicking the input
+    function triggerLaugh() {
+        if (isTransforming) return;
+        assistantRobot.classList.add('laughing');
+        const originalMsg = robotMsg.innerHTML;
+        robotMsg.innerHTML = translations[currentLang]['robot-laugh'] || "Haha! Lucu sekali! 😄";
+
+        gsap.to(assistantRobot, {
+            y: -20, repeat: 5, yoyo: true, duration: 0.1, onComplete: () => {
+                assistantRobot.classList.remove('laughing');
+                robotMsg.innerHTML = originalMsg;
+            }
+        });
+    }
+
+    function triggerAngry() {
+        if (isTransforming) return;
+        assistantRobot.classList.add('angry');
+        const originalMsg = robotMsg.innerHTML;
+        robotMsg.innerHTML = translations[currentLang]['robot-angry'] || "Hei! Jangan klik terus! 😡";
+
+        // Mobile Vibration (Angry Pattern)
+        if ('vibrate' in navigator) {
+            navigator.vibrate([100, 50, 100, 50, 100, 50, 100]);
+        }
+
+        gsap.to(assistantRobot, {
+            x: "+=5", repeat: 20, yoyo: true, duration: 0.05, onComplete: () => {
+                assistantRobot.classList.remove('angry');
+                robotMsg.innerHTML = originalMsg;
+            }
+        });
+    }
+
+    function triggerTransformation() {
+        if (isTransforming) return;
+        isTransforming = true;
+
+        // Hide dialogue
+        const dialogue = assistantRobot.querySelector('.robot-dialogue');
+        if (dialogue) dialogue.style.opacity = '0';
+
+        // 1. Prepare parts for shifting
+        const head = assistantRobot.querySelector('.robot-head');
+        const torso = assistantRobot.querySelector('.robot-torso');
+        const arms = assistantRobot.querySelectorAll('.arm');
+        const legs = assistantRobot.querySelectorAll('.leg');
+
+        const tl = gsap.timeline({
+            onComplete: () => {
+                isTransforming = false;
+                if (dialogue) dialogue.style.opacity = '1';
+                // Revert classes
+                assistantRobot.classList.remove('transforming-to-car');
+                // Reset parts visual state for next time
+                gsap.set([head, torso, arms, legs], { clearProps: "all" });
+                // Revert position
+                gsap.to(assistantRobot, { scale: 1, x: 0, y: 0, duration: 0.5 });
+            }
+        });
+
+        // Save original position
+        const rect = assistantRobot.getBoundingClientRect();
+        const startX = rect.left;
+        const startY = rect.top;
+
+        // 2. Part-Shifting Transformation sequence
+        tl.to(head, { y: 10, scale: 0.5, opacity: 0, duration: 0.3 })
+            .to(arms, { x: (i) => i === 0 ? 10 : -10, scale: 0, duration: 0.3 }, 0)
+            .to(legs, { y: -10, scale: 0, duration: 0.3 }, 0)
+            .to(torso, { scale: 1.5, rotation: 180, duration: 0.4 }, 0.1)
+            .to(assistantRobot, {
+                rotation: 720,
+                scale: 0.6,
+                duration: 0.6,
+                ease: "power2.inOut",
+                onStart: () => assistantRobot.classList.add('transforming-to-car')
+            }, 0.2)
+            // 3. Zoom to center
+            .to(assistantRobot, {
+                left: '50%',
+                top: '50%',
+                xPercent: -50,
+                yPercent: -50,
+                duration: 0.5,
+                ease: "back.in(1.2)"
+            })
+            // 4. CRASH! Zoom towards screen
+            .to(assistantRobot, {
+                scale: 25,
+                opacity: 0,
+                duration: 0.3,
+                ease: "power4.in",
+                onStart: () => {
+                    // Flash/Shake/Crack
+                    setTimeout(() => {
+                        if (screenCrackOverlay) screenCrackOverlay.classList.add('active');
+                        document.body.classList.add('screen-shake');
+
+                        // Mobile Vibration (Strong Crash Pulse)
+                        if ('vibrate' in navigator) {
+                            navigator.vibrate(200);
+                        }
+
+                        // Reset effects after a delay
+                        setTimeout(() => {
+                            if (screenCrackOverlay) screenCrackOverlay.classList.remove('active');
+                            document.body.classList.remove('screen-shake');
+                        }, 2500);
+                    }, 100);
+                }
+            })
+            // 5. Reappear and return
+            .set(assistantRobot, { opacity: 1, scale: 0 })
+            .to(assistantRobot, {
+                left: startX + 'px',
+                top: startY + 'px',
+                xPercent: 0,
+                yPercent: 0,
+                scale: 1,
+                duration: 1,
+                ease: "elastic.out(1, 0.4)"
+            });
+    }
+
+    assistantRobot.addEventListener('click', (e) => {
+        if (dragDistance > 5) return; // Ignore if intentional drag
+        if (isTransforming) return;
         if (e.target.id === 'robot-input') return;
 
-        assistantRobot.classList.toggle('dialogue-active');
+        clickCount++;
 
-        if (assistantRobot.classList.contains('dialogue-active')) {
-            // Jump and Spin animation
-            gsap.timeline()
-                .to(assistantRobot, { y: -30, scale: 1.1, duration: 0.3, ease: "power2.out" })
-                .to(assistantRobot, {
-                    rotationY: 360,
-                    duration: 0.5,
-                    ease: "power1.inOut"
-                }, "-=0.1")
-                .to(assistantRobot, {
-                    y: 0,
-                    scale: 1,
-                    duration: 0.4,
-                    ease: "bounce.out",
-                    onComplete: () => {
-                        assistantRobot.style.rotationY = 0;
-                    }
-                });
-        }
+        if (clickTimer) clearTimeout(clickTimer);
+
+        clickTimer = setTimeout(() => {
+            if (clickCount === 1) {
+                triggerTransformation();
+            } else if (clickCount === 2) {
+                triggerLaugh();
+            } else if (clickCount >= 3) {
+                triggerAngry();
+            }
+            clickCount = 0;
+        }, 300); // 300ms window for multi-clicks
     });
 
-    // 0.2 Dialogue Input Handling
-    const robotInput = document.getElementById('robot-input');
-    const robotMsg = document.querySelector('.robot-message');
+    if (closeSidebarBtn) {
+        closeSidebarBtn.addEventListener('click', () => {
+            robotSidebar.classList.remove('active');
+        });
+    }
+
+    // Sidebar Quick Actions Logic
+    document.querySelectorAll('.sidebar-action-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            robotSidebar.classList.remove('active');
+        });
+    });
+
+    // Sidebar Navigation Logic
+    document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const index = link.getAttribute('data-index');
+            if (index !== null) {
+                goToScene(parseInt(index));
+            }
+            robotSidebar.classList.remove('active');
+        });
+    });
+
+    if (headerRobotBtn) {
+        headerRobotBtn.addEventListener('click', () => {
+            robotSidebar.classList.add('active');
+            // Visual reaction on the floating robot too
+            gsap.to(assistantRobot, { scale: 1.2, duration: 0.2, yoyo: true, repeat: 1 });
+        });
+    }
+
+    // 0.2 Dialogue Input Handling (Sync floating & sidebar)
+    function handleRobotResponse(inputVal, targetMsgElement) {
+        // Interaction: Robot jumps after receiving message
+        gsap.to(assistantRobot, { y: -15, yoyo: true, repeat: 1, duration: 0.2 });
+
+        // Show "Response" in both places if possible
+        const responseText = translations[currentLang]['robot-thanks'];
+        if (robotMsg) robotMsg.innerHTML = responseText;
+        if (sidebarRobotMsg) sidebarRobotMsg.innerHTML = responseText;
+
+        // Revert back after a few seconds
+        setTimeout(() => {
+            const idleText = translations[currentLang]['robot-greet'];
+            if (robotMsg) robotMsg.innerHTML = idleText;
+            if (sidebarRobotMsg) sidebarRobotMsg.innerHTML = idleText;
+        }, 4000);
+    }
 
     if (robotInput) {
         robotInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && robotInput.value.trim() !== '') {
-                const userVal = robotInput.value;
+                handleRobotResponse(robotInput.value, robotMsg);
                 robotInput.value = '';
-
-                // Interaction: Robot jumps after receiving message
-                gsap.to(assistantRobot, { y: -15, yoyo: true, repeat: 1, duration: 0.2 });
-
-                // Show "Response"
-                robotMsg.innerHTML = translations[currentLang]['robot-thanks'];
-
-                // Revert back after a few seconds
-                setTimeout(() => {
-                    robotMsg.innerHTML = translations[currentLang]['robot-greet'];
-                }, 4000);
             }
         });
     }
+
+    // --- Sidebar Outside Click Logic ---
+    document.addEventListener('click', (e) => {
+        const isSidebarActive = robotSidebar.classList.contains('active');
+        const clickedInsideSidebar = robotSidebar.contains(e.target);
+        const clickedRobot = assistantRobot.contains(e.target);
+        const clickedHeaderBtn = headerRobotBtn && headerRobotBtn.contains(e.target);
+
+        if (isSidebarActive && !clickedInsideSidebar && !clickedRobot && !clickedHeaderBtn) {
+            robotSidebar.classList.remove('active');
+        }
+    });
+
+
 
     function triggerDizzy() {
         if (!assistantRobot) return;
@@ -2106,11 +2273,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if ((deltaX > moveThreshold && deltaY > moveThreshold) || (deltaX > moveThreshold && deltaZ > moveThreshold) || (deltaY > moveThreshold && deltaZ > moveThreshold)) {
                 assistantRobot.classList.add('active');
                 triggerDizzy();
-                clearTimeout(shakeTimeout);
                 shakeTimeout = setTimeout(() => {
-                    if (!document.querySelector('.modal.active')) {
-                        assistantRobot.classList.remove('active');
-                    }
+                    // Stay visible
                 }, 5000);
             }
         }
@@ -2163,10 +2327,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (mutation.attributeName === 'class') {
                 const target = mutation.target;
                 if (target.classList.contains('modal') && target.classList.contains('active')) {
-                    assistantRobot.classList.add('active');
                     resetIdleTimer();
                 } else if (target.classList.contains('modal') && !document.querySelector('.modal.active')) {
-                    assistantRobot.classList.remove('active');
                     assistantRobot.classList.remove('dizzy');
                     clearTimeout(idleTimer);
                 }
@@ -2201,11 +2363,5 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('mousemove', (e) => {
         const xPercent = (e.clientX / window.innerWidth) - 0.5;
         const yPercent = (e.clientY / window.innerHeight) - 0.5;
-        scenes.forEach(scene => {
-            const headings = scene.querySelectorAll('h1, h2');
-            headings.forEach(h => {
-                gsap.to(h, { x: xPercent * 30, y: yPercent * 30, duration: 1, ease: "power2.out" });
-            });
-        });
     });
 });
