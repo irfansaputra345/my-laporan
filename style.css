@@ -577,6 +577,25 @@ body {
     }
 }
 
+/* Walking Animation */
+.robot-character.walking .leg.left-leg {
+    animation: legSwing 0.4s infinite alternate ease-in-out;
+}
+
+.robot-character.walking .leg.right-leg {
+    animation: legSwing 0.4s infinite alternate-reverse ease-in-out;
+}
+
+@keyframes legSwing {
+    from {
+        transform: rotate(-15deg) translateY(-2px);
+    }
+
+    to {
+        transform: rotate(15deg) translateY(0);
+    }
+}
+
 /* Robot Dialogue Bubble */
 .robot-dialogue {
     position: absolute;

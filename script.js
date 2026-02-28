@@ -4,6 +4,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentIndex = 0;
     let isAnimating = false;
     let autoSaveTimeout;
+    const WA_PHONE = "6287847712990";
+
+    function getIndoDate(dateInput) {
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        const d = dateInput ? new Date(dateInput) : new Date();
+        return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    }
+
+    function getIndoFullDate(dateInput) {
+        const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        const d = dateInput ? new Date(dateInput) : new Date();
+        return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    }
 
     // --- Intro Animation ---
     const preloader = document.getElementById('preloader-overlay');
@@ -914,10 +928,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (whatsappAgendaBtn) {
         whatsappAgendaBtn.addEventListener('click', () => {
             const data = getAgendaData();
-            const d = new Date(data.date);
-            const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-            const dateStr = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+            const dateStr = getIndoFullDate(data.date);
 
             let text = `*Pengumuman Agenda*\n\n`;
             text += `Tanggal: ${dateStr}\n`;
@@ -937,9 +948,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 text += `\n`;
             });
 
-            const phone = "087847712990";
-            const encodedMsg = encodeURIComponent(text);
-            const waUrl = `https://api.whatsapp.com/send?phone=${phone.replace(/^0/, '62')}&text=${encodedMsg}`;
+            const encodedMsg = encodeURIComponent(text.trim());
+            const waUrl = `https://api.whatsapp.com/send?phone=${WA_PHONE}&text=${encodedMsg}`;
             window.open(waUrl, '_blank');
         });
     }
@@ -995,6 +1005,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="report-notes" style="flex: 1; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 10px;">
                             ${note.content || note.note || ''}
                         </div>
+                        <div class="report-footer" style="justify-content: flex-end;">
+                             <button class="card-wa-btn" onclick="const dateStr = getIndoDate('${note.date || ''}'); const msg = encodeURIComponent('*Catatan Laporan*\\n\\nJudul: ${note.title || '-'}\\nTanggal: ' + dateStr + '\\n\\n${(note.content || note.note || '').replace(/'/g, "\\'").replace(/\n/g, "\\n")}'); window.open('https://api.whatsapp.com/send?phone=${WA_PHONE}&text=' + msg, '_blank')">
+                                <i class="fab fa-whatsapp"></i>
+                             </button>
+                        </div>
                     </div>
                 `;
             }
@@ -1020,7 +1035,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }).join('') : '<div class="report-item">No items</div>'}
                         </div>
                         <div class="report-footer" style="justify-content: flex-end;">
-                             <button class="card-wa-btn" onclick="window.open('https://api.whatsapp.com/send?phone=6287847712990&text=${encodeURIComponent(`Laporan SPH ${cardDateStr} :\n\nKomoditas Naik:\n` + (note.items.filter(i => i.status === 'status-naik').map(i => `- ${i.commodity}`).join('\n') || '- (Nihil)') + `\n\nKomoditas Turun:\n` + (note.items.filter(i => i.status === 'status-turun').map(i => `- ${i.commodity}`).join('\n') || '- (Nihil)'))}', '_blank')">
+                             <button class="card-wa-btn" onclick="const dateStr = getIndoDate('${note.date || ''}'); const msg = encodeURIComponent('*Laporan SPH* ' + dateStr + ' :\\n\\n*Komoditas Naik:*\\n' + ('${(note.items ? note.items.filter(i => i.status === 'status-naik').map(i => `- ${i.commodity}`).join('\\n') : '') || '- (Nihil)'}') + '\\n\\n*Komoditas Turun:*\\n' + ('${(note.items ? note.items.filter(i => i.status === 'status-turun').map(i => `- ${i.commodity}`).join('\\n') : '') || '- (Nihil)'}')); window.open('https://api.whatsapp.com/send?phone=${WA_PHONE}&text=' + msg, '_blank')">
                                 <i class="fab fa-whatsapp"></i>
                              </button>
                         </div>
@@ -1050,7 +1065,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="report-footer">
                              <div class="report-market"><i class="fas fa-store"></i> ${note.market || '...'}</div>
-                             <button class="card-wa-btn" onclick="window.open('https://api.whatsapp.com/send?phone=6287847712990&text=${encodeURIComponent(`SOP Perubahan Harga mingguan ${note.market || 'Pasar ...'} ${cardDateStr} :\n\n` + (note.items ? note.items.map((item, i) => `${i + 1}. ${item.commodity || '...'}: ${translations[currentLang][item.status] || 'tetap'}${item.cause ? ' karena ' + item.cause : ''}`).join('\n') : ''))}', '_blank')">
+                             <button class="card-wa-btn" onclick="const dateStr = getIndoDate('${note.date || ''}'); const msg = encodeURIComponent('*SOP Perubahan Harga mingguan* ${note.market || 'Pasar ...'} ' + dateStr + ' :\\n\\n' + ('${note.items ? note.items.map((item, i) => `${i + 1}. ${item.commodity || '...'}: ${translations[currentLang][item.status] || 'tetap'}${item.cause ? ' karena ' + item.cause : ''}`).join('\\n').replace(/'/g, "\\'") : ''}')); window.open('https://api.whatsapp.com/send?phone=${WA_PHONE}&text=' + msg, '_blank')">
                                 <i class="fab fa-whatsapp"></i>
                              </button>
                         </div>
@@ -1078,6 +1093,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                     `}
                                 </div>
                             `).join('') : '<div class="report-item">No items</div>'}
+                        </div>
+                        <div class="report-footer" style="justify-content: flex-end;">
+                             <button class="card-wa-btn" onclick="const fullDate = getIndoFullDate('${note.date || ''}'); const msg = encodeURIComponent('*Pengumuman Agenda*\\n\\nTanggal: ' + fullDate + '\\nJudul: ${note.title || '-'}\\n\\n*Detail Agenda:*\\n\\n' + ('${note.items ? note.items.map((item, i) => { if (item.type === 'custom') { return `${i + 1}. *${item.title}:* ${item.content}`; } else { return `${i + 1}. *${item.activity}*\\n   Tempat: ${item.location}\\n   Jam: ${item.time} WiB${item.material ? '\\n   Materi: ' + item.material : ''}${item.speaker ? '\\n   Pengisi: ' + item.speaker : ''}`; } }).join('\\n\\n').replace(/'/g, "\\'") : ''}')); window.open('https://api.whatsapp.com/send?phone=${WA_PHONE}&text=' + msg, '_blank')">
+                                <i class="fab fa-whatsapp"></i>
+                             </button>
                         </div>
                     </div>
                 `;
@@ -1108,6 +1128,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="report-notes">
                         ${note.note || ''}
                     </div>
+                    <div class="report-footer" style="justify-content: flex-end;">
+                         <button class="card-wa-btn" onclick="const dateStr = getIndoDate('${note.date || ''}'); const msg = encodeURIComponent('*Laporan Perubahan Harga Komoditas PIHPS Pasar Tradisional*\\n\\nTanggal: ' + dateStr + '\\n\\nBeberapa komoditas pada PIHPS Pasar Tradisional yang mengalami perubahan harga antara lain:\\n\\n' + ('${note.items ? note.items.map((item, i) => `${i + 1}. ${item.commodity || '...'} – ${note.market || '...'} (${item.merchant || '...'}) – *${item.cause || '...'}*`).join('\\n\\n').replace(/'/g, "\\'") : ''}') + '\\n\\n${(note.note || '').replace(/'/g, "\\'").replace(/\n/g, "\\n")}'); window.open('https://api.whatsapp.com/send?phone=${WA_PHONE}&text=' + msg, '_blank')">
+                            <i class="fab fa-whatsapp"></i>
+                         </button>
+                    </div>
                 </div>
             `;
         }).join('');
@@ -1130,23 +1155,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     whatsappNoteBtn.addEventListener('click', () => {
         const data = getNoteData();
-        const phone = "087847712990";
-
-        // Format date from input or use current date
-        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        let waDateStr;
-
-        if (data.date) {
-            const dateObj = new Date(data.date);
-            waDateStr = `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
-        } else {
-            const now = new Date();
-            waDateStr = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
-        }
+        const dateStr = getIndoDate(data.date);
 
         // Format message matching screenshot exactly
         let message = `*Laporan Perubahan Harga Komoditas PIHPS Pasar Tradisional*\n\n`;
-        message += `Tanggal: ${waDateStr}\n\n`;
+        message += `Tanggal: ${dateStr}\n\n`;
         message += `Beberapa komoditas pada PIHPS Pasar Tradisional yang mengalami perubahan harga antara lain:\n\n`;
 
         const marketName = data.market || '...';
@@ -1161,8 +1174,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         message += `${data.note || ''}`;
 
-        const encodedMsg = encodeURIComponent(message);
-        const waUrl = `https://api.whatsapp.com/send?phone=${phone.replace(/^0/, '62')}&text=${encodedMsg}`;
+        const encodedMsg = encodeURIComponent(message.trim());
+        const waUrl = `https://api.whatsapp.com/send?phone=${WA_PHONE}&text=${encodedMsg}`;
 
         window.open(waUrl, '_blank');
     });
@@ -1361,25 +1374,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     date: genNoteDateInput.value,
                     content: genNoteArea.value
                 };
-                const phone = "087847712990";
-                const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-                let waDateStr;
-
-                if (data.date) {
-                    const dateObj = new Date(data.date);
-                    waDateStr = `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
-                } else {
-                    const now = new Date();
-                    waDateStr = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
-                }
+                const dateStr = getIndoDate(data.date);
 
                 let message = `*Catatan Laporan*\n\n`;
                 message += `Judul: ${data.title || '-'}\n`;
-                message += `Tanggal: ${waDateStr}\n\n`;
+                message += `Tanggal: ${dateStr}\n\n`;
                 message += `${data.content || ''}`;
 
-                const encodedMsg = encodeURIComponent(message);
-                const waUrl = `https://api.whatsapp.com/send?phone=${phone.replace(/^0/, '62')}&text=${encodedMsg}`;
+                const encodedMsg = encodeURIComponent(message.trim());
+                const waUrl = `https://api.whatsapp.com/send?phone=${WA_PHONE}&text=${encodedMsg}`;
                 window.open(waUrl, '_blank');
             });
         }
@@ -1582,26 +1585,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (whatsappSopBtn) {
         whatsappSopBtn.addEventListener('click', () => {
             const data = getSopData();
-            const phone = "087847712990";
-            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            const dateStr = getIndoDate(data.date);
 
-            let dateStr;
-            if (data.date) {
-                const d = new Date(data.date);
-                dateStr = `${d.getDate()} ${months[d.getMonth()]}`;
-            } else {
-                const now = new Date();
-                dateStr = `${now.getDate()} ${months[now.getMonth()]}`;
-            }
-
-            let message = `SOP Perubahan Harga mingguan ${data.market || 'Pasar ...'} ${dateStr} :\n\n`;
+            let message = `*SOP Perubahan Harga mingguan* ${data.market || 'Pasar ...'} ${dateStr} :\n\n`;
             data.items.forEach((item, i) => {
                 const statusText = translations[currentLang][item.status] || 'tetap';
                 message += `${i + 1}. ${item.commodity || '...'}: ${statusText}${item.cause ? ' karena ' + item.cause : ''}\n`;
             });
 
-            const encodedMsg = encodeURIComponent(message);
-            const waUrl = `https://api.whatsapp.com/send?phone=${phone.replace(/^0/, '62')}&text=${encodedMsg}`;
+            const encodedMsg = encodeURIComponent(message.trim());
+            const waUrl = `https://api.whatsapp.com/send?phone=${WA_PHONE}&text=${encodedMsg}`;
             window.open(waUrl, '_blank');
         });
     }
@@ -1868,19 +1861,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (whatsappSphBtn) {
         whatsappSphBtn.addEventListener('click', () => {
             const data = getSphData();
-            const phone = "087847712990";
-            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-
-            let waDateStr;
-            if (data.date) {
-                const dateObj = new Date(data.date);
-                waDateStr = `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
-            } else {
-                waDateStr = '-';
-            }
+            const dateStr = getIndoDate(data.date);
 
             let message = `*Laporan SPH*\n`;
-            message += `Tanggal: ${waDateStr}\n\n`;
+            message += `Tanggal: ${dateStr}\n\n`;
 
             // Group by Naik/Turun
             const naik = data.items.filter(i => i.status === 'status-naik').map(i => ({ name: i.commodity, note: i.anecdotal }));
@@ -1900,7 +1884,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 message += `- (Nihil)\n`;
             }
 
-            window.open(`https://api.whatsapp.com/send?phone=${phone.replace(/^0/, '62')}&text=${encodeURIComponent(message)}`, '_blank');
+            const encodedMsg = encodeURIComponent(message.trim());
+            window.open(`https://api.whatsapp.com/send?phone=${WA_PHONE}&text=${encodedMsg}`, '_blank');
         });
     }
 
@@ -2052,6 +2037,7 @@ document.addEventListener('DOMContentLoaded', () => {
         assistantRobot.style.right = 'auto';
 
         if (e.cancelable) e.preventDefault();
+        resetIdleTimer();
     }
 
     function endDrag() {
@@ -2339,13 +2325,21 @@ document.addEventListener('DOMContentLoaded', () => {
         lastZ = curZ;
     });
 
-    // 2. Idle Detection in Modals
+    // 2. Idle Detection & Wandering
     let idleTimer;
-    const idleLimit = 5000; // 5 seconds
+    let globalIdleTimer;
+    let wanderingTl;
+    let isWandering = false;
+    const idleLimit = 5000; // 5 seconds for dizzy in modal
+    const globalIdleLimit = 30000; // 30 seconds for wandering
 
     function resetIdleTimer(e) {
         if (assistantRobot.classList.contains('dizzy')) {
             assistantRobot.classList.remove('dizzy');
+        }
+
+        if (isWandering) {
+            stopWandering();
         }
 
         // Proactive Greeting when typing
@@ -2360,14 +2354,68 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         clearTimeout(idleTimer);
+        clearTimeout(globalIdleTimer);
+
         if (document.querySelector('.modal.active')) {
             idleTimer = setTimeout(() => {
                 triggerDizzy();
             }, idleLimit);
+        } else {
+            // Only wander if not in modal
+            globalIdleTimer = setTimeout(() => {
+                startWandering();
+            }, globalIdleLimit);
         }
     }
 
-    // Watch for interactions in modals
+    function startWandering() {
+        if (isWandering || isTransforming || document.querySelector('.modal.active')) return;
+        isWandering = true;
+        assistantRobot.classList.add('walking');
+
+        const wander = () => {
+            if (!isWandering) return;
+
+            // Random position with padding
+            const padding = 100;
+            const targetX = Math.random() * (window.innerWidth - padding * 2) + padding;
+            const targetY = Math.random() * (window.innerHeight - padding * 2) + padding;
+
+            // Flip robot based on direction
+            const currentX = gsap.getProperty(assistantRobot, "left");
+            if (targetX < currentX) {
+                gsap.to(assistantRobot, { scaleX: -1, duration: 0.3 });
+            } else {
+                gsap.to(assistantRobot, { scaleX: 1, duration: 0.3 });
+            }
+
+            wanderingTl = gsap.to(assistantRobot, {
+                left: targetX,
+                top: targetY,
+                duration: 5 + Math.random() * 5,
+                ease: "none",
+                onComplete: () => {
+                    // Wait a bit before next wander
+                    if (isWandering) {
+                        setTimeout(wander, 2000 + Math.random() * 3000);
+                    }
+                }
+            });
+        };
+
+        wander();
+    }
+
+    function stopWandering() {
+        isWandering = false;
+        if (wanderingTl) wanderingTl.kill();
+        assistantRobot.classList.remove('walking');
+        // Return to anchor or stay put? User said "jalan jalan sendiri" (wander around).
+        // Let's just stop and snap back to a reasonable scale if flipped.
+        gsap.to(assistantRobot, { scaleX: 1, duration: 0.3 });
+    }
+
+    // Watch for interactions
     const modalInputs = document.querySelectorAll('.modal input, .modal textarea, .modal select');
     modalInputs.forEach(input => {
         input.addEventListener('input', resetIdleTimer);
@@ -2375,6 +2423,15 @@ document.addEventListener('DOMContentLoaded', () => {
         input.addEventListener('click', resetIdleTimer);
         input.addEventListener('keydown', resetIdleTimer);
     });
+
+    // Global listeners for wandering
+    window.addEventListener('mousemove', resetIdleTimer);
+    window.addEventListener('mousedown', resetIdleTimer);
+    window.addEventListener('keydown', resetIdleTimer);
+    window.addEventListener('touchstart', resetIdleTimer);
+
+    // Initial global idle start
+    resetIdleTimer();
 
     function updateBodyModalClass() {
         if (!document.querySelector('.modal.active')) {
