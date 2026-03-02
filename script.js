@@ -1,23 +1,47 @@
+const WA_PHONE = "6287847712990";
+
+function getIndoDate(dateInput) {
+    const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    const d = dateInput ? new Date(dateInput) : new Date();
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function getIndoFullDate(dateInput) {
+    const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    const d = dateInput ? new Date(dateInput) : new Date();
+    return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function getAgendaWAMessage(data) {
+    const fullDate = getIndoFullDate(data.date);
+    let text = `[A] [G] [E] [N] [D] [A]\nH A R I 🗓️ I N I\n\nالسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ\n\n🗓️  \`\` ${fullDate} "\n\n:: Agenda Hari Ini ::\n`;
+
+    if (data.items) {
+        data.items.forEach((item) => {
+            if (item.type === 'custom') {
+                text += `👉 *${item.title}* : ${item.content}\n`;
+            } else {
+                if (item.location) text += `🕌 ${item.location}\n`;
+                if (item.time) text += `⌚ *${item.time}* WiB\n`;
+                if (item.activity) text += `*${item.activity}*\n`;
+                if (item.material) text += `📒 *${item.material}*\n`;
+                if (item.speaker) text += `*(${item.speaker})*\n`;
+            }
+            text += `\n`;
+        });
+    }
+
+    text += `Diniati karena Alloh, Mg2 ALLOH paring aman sehat selamat lancar barokah.\n\nالْحَمْدُ لِلَّهِ جَزَا كُمُ اللهُ خَيْرًا\nوَالسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ`;
+    return text;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // --- Global Variable Definitions ---
     const scenes = gsap.utils.toArray('.scene');
     let currentIndex = 0;
     let isAnimating = false;
     let autoSaveTimeout;
-    const WA_PHONE = "6287847712990";
-
-    function getIndoDate(dateInput) {
-        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        const d = dateInput ? new Date(dateInput) : new Date();
-        return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
-    }
-
-    function getIndoFullDate(dateInput) {
-        const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        const d = dateInput ? new Date(dateInput) : new Date();
-        return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
-    }
 
     // --- Intro Animation ---
     const preloader = document.getElementById('preloader-overlay');
@@ -879,7 +903,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Failed to save note. Storage might be full.');
         }
     });
-
     function getAgendaData() {
         const items = [];
         agendaRowsContainer.querySelectorAll('.agenda-row').forEach(row => {
@@ -930,26 +953,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (whatsappAgendaBtn) {
         whatsappAgendaBtn.addEventListener('click', () => {
             const data = getAgendaData();
-            const dateStr = getIndoFullDate(data.date);
-
-            let text = `*Pengumuman Agenda*\n\n`;
-            text += `Tanggal: ${dateStr}\n`;
-            text += `Judul: ${data.title || '-'}\n\n`;
-            text += `*Detail Agenda:*\n\n`;
-
-            data.items.forEach((item, i) => {
-                if (item.type === 'custom') {
-                    text += `${i + 1}. *${item.title}:* ${item.content}\n`;
-                } else {
-                    text += `${i + 1}. *${item.activity}*\n`;
-                    text += `   Tempat: ${item.location}\n`;
-                    text += `   Jam: ${item.time} WiB\n`;
-                    if (item.material) text += `   Materi: ${item.material}\n`;
-                    if (item.speaker) text += `   Pengisi: ${item.speaker}\n`;
-                }
-                text += `\n`;
-            });
-
+            const text = getAgendaWAMessage(data);
             const encodedMsg = encodeURIComponent(text.trim());
             const waUrl = `https://api.whatsapp.com/send?phone=${WA_PHONE}&text=${encodedMsg}`;
             window.open(waUrl, '_blank');
@@ -1097,7 +1101,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             `).join('') : '<div class="report-item">No items</div>'}
                         </div>
                         <div class="report-footer" style="justify-content: flex-end;">
-                             <button class="card-wa-btn" onclick="const fullDate = getIndoFullDate('${note.date || ''}'); const msg = encodeURIComponent('*Pengumuman Agenda*\\n\\nTanggal: ' + fullDate + '\\nJudul: ${note.title || '-'}\\n\\n*Detail Agenda:*\\n\\n' + ('${note.items ? note.items.map((item, i) => { if (item.type === 'custom') { return `${i + 1}. *${item.title}:* ${item.content}`; } else { return `${i + 1}. *${item.activity}*\\n   Tempat: ${item.location}\\n   Jam: ${item.time} WiB${item.material ? '\\n   Materi: ' + item.material : ''}${item.speaker ? '\\n   Pengisi: ' + item.speaker : ''}`; } }).join('\\n\\n').replace(/'/g, "\\'") : ''}')); window.open('https://api.whatsapp.com/send?phone=${WA_PHONE}&text=' + msg, '_blank')">
+                             <button class="card-wa-btn" onclick="const message = getAgendaWAMessage(${JSON.stringify(note).replace(/"/g, '&quot;')}); const encoded = encodeURIComponent(message); window.open('https://api.whatsapp.com/send?phone=${WA_PHONE}&text=' + encoded, '_blank')">
                                 <i class="fab fa-whatsapp"></i>
                              </button>
                         </div>
