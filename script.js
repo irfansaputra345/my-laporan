@@ -1,4 +1,5 @@
 const WA_PHONE = "6287847712990";
+const WA_PHONE_AGENDA = "62895355215543";
 
 function getIndoDate(dateInput) {
     const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -206,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'nav-title': 'NAVIGATION',
             'title-quick-actions': 'REPORTS & NOTES',
             'title-system-status': 'SYSTEM STATUS',
-            'robot-greet': 'Hello! I am <strong>IRBOT</strong>. How can I help you today?',
+            'robot-greet': 'Chat Me',
             'robot-thanks': 'Thanks for the message! I am <strong>IRBOT</strong>, and I will help you recording everything.',
             'robot-shake': 'Whoa! Stop shaking! <strong>IRBOT</strong> is so dizzy...',
             'robot-idle': 'Are you still there? Do not forget to save your note!',
@@ -295,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'nav-title': 'NAVIGASI',
             'title-quick-actions': 'LAPORAN & CATATAN',
             'title-system-status': 'STATUS SISTEM',
-            'robot-greet': 'Halo! Saya <strong>IRBOT</strong>. Ada yang bisa saya bantu hari ini?',
+            'robot-greet': 'Chat Me',
             'robot-thanks': 'Terima kasih pesannya! Saya <strong>IRBOT</strong>, dan saya akan bantu mencatat semuanya.',
             'robot-shake': 'Waduh! Jangan digoyang-goyang! <strong>IRBOT</strong> pusing...',
             'robot-idle': 'Halo? Masih di sana? Jangan lupa simpan catatannya ya!',
@@ -955,7 +956,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = getAgendaData();
             const text = getAgendaWAMessage(data);
             const encodedMsg = encodeURIComponent(text.trim());
-            const waUrl = `https://api.whatsapp.com/send?phone=${WA_PHONE}&text=${encodedMsg}`;
+            const waUrl = `https://api.whatsapp.com/send?phone=${WA_PHONE_AGENDA}&text=${encodedMsg}`;
             window.open(waUrl, '_blank');
         });
     }
@@ -1101,7 +1102,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             `).join('') : '<div class="report-item">No items</div>'}
                         </div>
                         <div class="report-footer" style="justify-content: flex-end;">
-                             <button class="card-wa-btn" onclick="const message = getAgendaWAMessage(${JSON.stringify(note).replace(/"/g, '&quot;')}); const encoded = encodeURIComponent(message); window.open('https://api.whatsapp.com/send?phone=${WA_PHONE}&text=' + encoded, '_blank')">
+                             <button class="card-wa-btn" onclick="const message = getAgendaWAMessage(${JSON.stringify(note).replace(/"/g, '&quot;')}); const encoded = encodeURIComponent(message); window.open('https://api.whatsapp.com/send?phone=${WA_PHONE_AGENDA}&text=' + encoded, '_blank')">
                                 <i class="fab fa-whatsapp"></i>
                              </button>
                         </div>

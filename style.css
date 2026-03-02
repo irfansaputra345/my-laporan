@@ -67,43 +67,171 @@ body {
     align-items: center;
 }
 
-.robot-head {
-    width: 40px;
-    height: 35px;
-    background: #fff;
-    border-radius: 10px;
+/* Wall-E Aesthetics */
+.walle-container {
+    width: 60px;
+    height: 80px;
     position: relative;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.robot-eye {
-    width: 6px;
-    height: 6px;
-    background: #FFD700;
-    /* Gold eye */
+.walle-head {
+    width: 45px;
+    height: 25px;
+    position: relative;
+    margin-bottom: 5px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.walle-eyes {
+    display: flex;
+    gap: 2px;
+}
+
+.walle-eyes .eye {
+    width: 20px;
+    height: 18px;
+    background: #444;
+    border: 2px solid #222;
+    border-radius: 10px 10px 4px 4px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.walle-eyes .left-eye {
+    transform: rotate(-5deg);
+}
+
+.walle-eyes .right-eye {
+    transform: rotate(5deg);
+}
+
+.eye-inner {
+    width: 10px;
+    height: 10px;
+    background: #000;
     border-radius: 50%;
     position: absolute;
-    top: 10px;
-    box-shadow: 0 0 8px #FFD700;
+    top: 4px;
+    left: 4px;
+    box-shadow: 0 0 5px #4ea8ff;
+    animation: walle-blink 5s infinite;
 }
 
-.robot-eye.left {
-    left: 8px;
+.walle-neck {
+    width: 8px;
+    height: 10px;
+    background: #666;
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
 }
 
-.robot-eye.right {
-    right: 8px;
-}
-
-.robot-body {
-    width: 45px;
-    height: 35px;
-    background: var(--accent-color);
-    border-radius: 6px;
-    margin-top: -5px;
+.walle-body {
+    width: 50px;
+    height: 45px;
+    background: #e6a100;
+    /* Wall-E Yellow/Rust */
+    border: 2px solid #8b6b00;
+    border-radius: 8px;
     position: relative;
-    z-index: 1;
+    box-shadow: inset -5px -5px 15px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.walle-door {
+    width: 35px;
+    height: 30px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 10px;
+    left: 7.5px;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.walle-display {
+    width: 20px;
+    height: 4px;
+    background: #222;
+    position: absolute;
+    top: 5px;
+    left: 15px;
+    border-radius: 2px;
+}
+
+.charge-bar {
+    height: 100%;
+    width: 80%;
+    background: #00ff00;
+}
+
+.walle-leaf {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    font-size: 14px;
+    animation: walle-leaf-float 3s ease-in-out infinite;
+}
+
+.walle-treads {
+    display: flex;
+    gap: 40px;
+    width: 100%;
+    margin-top: -5px;
+}
+
+.tread {
+    width: 12px;
+    height: 25px;
+    background: #333;
+    border-radius: 4px;
+    border: 1px solid #111;
+}
+
+@keyframes walle-blink {
+
+    0%,
+    90%,
+    100% {
+        transform: scaleY(1);
+    }
+
+    95% {
+        transform: scaleY(0.1);
+    }
+}
+
+@keyframes walle-leaf-float {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0);
+    }
+
+    50% {
+        transform: translateY(-3px) rotate(10deg);
+    }
+}
+
+/* Assistant Avatar Wall-E mode adjustment */
+.assistant-avatar.walle-mode {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+}
+
+.assistant-avatar.walle-mode .walle-head {
+    transform: scale(1.5);
+}
+
+.assistant-avatar.walle-mode .walle-body {
+    transform: scale(1.5) translateY(10px);
 }
 
 .robot-legs {
@@ -519,6 +647,27 @@ body {
     transform: translateY(0) scale(1);
     user-select: none;
     -webkit-user-drag: none;
+    animation: robot-fly 4s ease-in-out infinite;
+}
+
+@keyframes robot-fly {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    25% {
+        transform: translateY(-8px) rotate(1deg);
+    }
+
+    50% {
+        transform: translateY(-15px) rotate(0deg);
+    }
+
+    75% {
+        transform: translateY(-8px) rotate(-1deg);
+    }
 }
 
 .robot-character.mini {
@@ -2710,16 +2859,14 @@ textarea::placeholder {
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.assistant-avatar.large {
+.assistant-avatar.walle-mode {
     width: 76px;
     height: 76px;
-    background: linear-gradient(135deg, #ffcc00, #333);
-    border: 2px solid #222;
-    border-radius: 22px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 20px rgba(255, 204, 0, 0.3);
+    animation: robot-fly 4s ease-in-out infinite;
 }
 
 .sidebar-robot-bubble {
