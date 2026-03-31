@@ -3173,3 +3173,52 @@ textarea.auto-expand {
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     }
 }
+
+/* Alternating Row Colors for Form Entries */
+.finding-row, .sop-row, .sph-row, .agenda-row {
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    border: 1px solid transparent; 
+}
+
+/* Odd rows: White-ish glass */
+.finding-row:nth-child(odd),
+.sop-row:nth-child(odd),
+.sph-row:nth-child(odd),
+.agenda-row:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Even rows: Light Blue-ish glass */
+.finding-row:nth-child(even),
+.sop-row:nth-child(even),
+.sph-row:nth-child(even),
+.agenda-row:nth-child(even) {
+    background: rgba(135, 206, 250, 0.1) !important; /* Light Sky Blue tint */
+    border-color: rgba(135, 206, 250, 0.25) !important;
+}
+
+/* Hover effect to increase brightness slightly */
+.finding-row:nth-child(odd):hover,
+.sop-row:nth-child(odd):hover,
+.sph-row:nth-child(odd):hover,
+.agenda-row:nth-child(odd):hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.finding-row:nth-child(even):hover,
+.sop-row:nth-child(even):hover,
+.sph-row:nth-child(even):hover,
+.agenda-row:nth-child(even):hover {
+    background: rgba(135, 206, 250, 0.15) !important;
+    border-color: rgba(135, 206, 250, 0.35) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}

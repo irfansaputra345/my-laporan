@@ -578,7 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     placeholder="${translations[currentLang]['placeholder-merchant']}" value="${merchant}">
             </div>
             <div class="input-group">
-                <label data-key="label-commodity">${translations[currentLang]['label-commodity']}</label>
+                <label><span data-key="label-commodity">${translations[currentLang]['label-commodity']}</span> <i class="fas fa-plus-circle add-commodity-inline-btn" style="cursor: pointer; color: var(--gold-color); margin-left: 5px;" title="Tambah Baris"></i></label>
                 <input type="text" class="commodity-input" data-placeholder="placeholder-commodity" 
                     placeholder="${translations[currentLang]['placeholder-commodity']}" value="${commodity}">
             </div>
@@ -592,6 +592,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         row.querySelector('.remove-finding-btn').addEventListener('click', () => {
             row.remove();
+            checkFindingRemoveButtons();
+            autoSaveNote();
+        });
+
+        row.querySelector('.add-commodity-inline-btn').addEventListener('click', () => {
+            const currentMerchant = row.querySelector('.merchant-input').value;
+            findingRowsContainer.appendChild(createFindingRow(currentMerchant));
             checkFindingRemoveButtons();
             autoSaveNote();
         });
@@ -1463,7 +1470,7 @@ document.addEventListener('DOMContentLoaded', () => {
         row.className = 'finding-row';
         row.innerHTML = `
             <div class="input-group">
-                <label data-key="label-commodity">${translations[currentLang]['label-commodity']}</label>
+                <label><span data-key="label-commodity">${translations[currentLang]['label-commodity']}</span> <i class="fas fa-plus-circle add-sop-inline-btn" style="cursor: pointer; color: #00bcd4; margin-left: 5px;" title="Tambah Baris"></i></label>
                 <input type="text" class="sop-commodity-input" data-placeholder="placeholder-commodity" 
                     placeholder="${translations[currentLang]['placeholder-commodity']}" value="${commodity}">
             </div>
@@ -1485,6 +1492,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         row.querySelector('.remove-sop-row-btn').addEventListener('click', () => {
             row.remove();
+            checkSopRemoveButtons();
+            autoSaveSop();
+        });
+
+        row.querySelector('.add-sop-inline-btn').addEventListener('click', () => {
+            sopRowsContainer.appendChild(createSopRow());
             checkSopRemoveButtons();
             autoSaveSop();
         });
@@ -1697,7 +1710,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Note: status values match keys in translations: 'status-naik', 'status-turun'
         row.innerHTML = `
             <div class="input-group">
-                <label data-key="label-commodity">${translations[currentLang]['label-commodity']}</label>
+                <label><span data-key="label-commodity">${translations[currentLang]['label-commodity']}</span> <i class="fas fa-plus-circle add-sph-inline-btn" style="cursor: pointer; color: #9c27b0; margin-left: 5px;" title="Tambah Baris"></i></label>
                 <input type="text" class="commodity-input" data-placeholder="placeholder-commodity" 
                     placeholder="${translations[currentLang]['placeholder-commodity']}" value="${commodity}">
             </div>
@@ -1718,6 +1731,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         row.querySelector('.remove-row-btn').addEventListener('click', () => {
             row.remove();
+            checkSphRemoveButtons();
+        });
+
+        row.querySelector('.add-sph-inline-btn').addEventListener('click', () => {
+            sphRowsContainer.appendChild(createSphRow());
             checkSphRemoveButtons();
         });
 
